@@ -1,6 +1,8 @@
 
 import { GluegunToolbox } from 'gluegun'
 import Api from '../api/chainx'
+const Table = require('cli-table3');
+const colors = require('colors/safe');
 module.exports = {
     name: 'trustee',
     alias: ['t'],
@@ -9,8 +11,7 @@ module.exports = {
         //     parameters,
         // } = toolbox
         const api = Api.getInstance();
-        const Table = require('cli-table3');
-        const colors = require('colors/safe');
+
         const session = await api.getTrusteeSessionInfo();
         const table = new Table({
             head: ['id', 'trustee addr', 'threshold']

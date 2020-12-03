@@ -10,3 +10,21 @@ export class TrusteeSessionInfo {
     threshold: number;
     trusteeList: string[];
 }
+
+export class ChainPerties {
+    ss58Format: number;
+    tokenDecimals: number;
+    tokenSymbol: string;
+    bitcoin_type: string;
+}
+
+export class WithdrawaItem {
+    id: string;
+    assetId: number;
+    applicant: string;
+    balance: number;
+    addr: string;
+    ext: string;
+    height: number;
+    state: string;
+}

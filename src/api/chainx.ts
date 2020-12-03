@@ -2,7 +2,7 @@ import { ApiPromise, WsProvider } from "@polkadot/api"
 import { options } from "@chainx-v2/api"
 import { assert } from "console";
 import { plainToClass } from 'class-transformer'
-import { TrusteeSessionInfo } from './typs'
+import { TrusteeSessionInfo, ChainPerties, WithdrawaItem } from './typs'
 
 const ora = require('ora');
 require("dotenv").config();
@@ -56,6 +56,7 @@ class Api {
 
     async getBtcNetworkState() {
         const { parentHash } = await this.api.rpc.chain.getHeader();
+        //@ts-ignore
         const netWorkType = await this.api.query.xGatewayBitcoin.networkId.at(parentHash);
         if (netWorkType.toString() === "Testnet") {
             return "testnet";
@@ -65,20 +66,9 @@ class Api {
     }
 
     // 获取链状态
-    async getChainProperties() {
+    async getChainProperties(): Promise<ChainPerties> {
         const systemProperties = await this.api.rpc.system.properties();
-        const properties = systemProperties.toJSON();
-        // BTC 精度信息
-        // @ts-ignore
-        const assets = await this.api.rpc.xassets.getAssets();
-        // const json = assets.toJSON();
-        // const normalized = Object.keys(json).map(id => {
-        //     return {
-        //         id,
-        //         ...json[id]
-        //     };
-        // });
-
+        const properties = plainToClass(ChainPerties, systemProperties.toJSON());
         const networkType = await this.getBtcNetworkState();
 
         properties.bitcoin_type = networkType;
@@ -86,25 +76,28 @@ class Api {
         return properties;
     }
 
-    async getBTCWithdrawList() {
+    async getBTCWithdrawList(): Promise<WithdrawaItem[]> {
         //  TODO: 处理分页问题
         // @ts-ignore
+        await this.ready()
+        //@ts-ignore
         const withdrawObject = await this.api.rpc.xgatewayrecords.withdrawalListByChain(
             "Bitcoin"
         );
-        let withdrawList = [];
-        Object.entries(withdrawObject.toJSON()).forEach(([key, value]) => {
+        const withdrawList: WithdrawaItem[] = [];
+        const withdrawItem = plainToClass(WithdrawaItem, withdrawObject.toJSON())
+        Object.entries(withdrawItem).forEach(([key, value]) => {
             withdrawList.push({
                 id: key,
                 // @ts-ignore
                 ...value
             });
         });
-
+        //@ts-ignore
         return withdrawList;
     }
 
-    async getWithdrawLimit(api) {
+    async getWithdrawLimit() {
         // TODO: Bitcoin asstId为1
         // @ts-ignore
         const limit = await this.api.rpc.xgatewaycommon.withdrawalLimit("1");
