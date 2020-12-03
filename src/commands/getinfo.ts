@@ -4,8 +4,8 @@ import Api from '../api/chainx'
 const Table = require('cli-table3');
 const colors = require('colors/safe');
 module.exports = {
-    name: 'trustee',
-    alias: ['t'],
+    name: 'info',
+    alias: ['i'],
     run: async (toolbox: GluegunToolbox) => {
         // const {
         //     parameters,
