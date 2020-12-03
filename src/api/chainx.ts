@@ -44,6 +44,7 @@ class Api {
 
     // 获取Storage中信托提现的Proposal状态
     public async getTxByReadStorage() {
+        await this.ready()
         const { parentHash } = await this.api.rpc.chain.getHeader();
         const btcTxLists = await this.api.query.xGatewayBitcoin.withdrawalProposal.at(
             parentHash
@@ -55,6 +56,7 @@ class Api {
     }
 
     async getBtcNetworkState() {
+        await this.ready()
         const { parentHash } = await this.api.rpc.chain.getHeader();
         //@ts-ignore
         const netWorkType = await this.api.query.xGatewayBitcoin.networkId.at(parentHash);
@@ -67,6 +69,7 @@ class Api {
 
     // 获取链状态
     async getChainProperties(): Promise<ChainPerties> {
+        await this.ready()
         const systemProperties = await this.api.rpc.system.properties();
         const properties = plainToClass(ChainPerties, systemProperties.toJSON());
         const networkType = await this.getBtcNetworkState();
@@ -99,6 +102,7 @@ class Api {
 
     async getWithdrawLimit() {
         // TODO: Bitcoin asstId为1
+        await this.ready()
         // @ts-ignore
         const limit = await this.api.rpc.xgatewaycommon.withdrawalLimit("1");
         const json = JSON.parse(limit.toString());
