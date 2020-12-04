@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 
 export async function getUnspents(address, network) {
-    const net = network === "mainnet" ? "main" : "test3";
+    // const net = network === "mainnet" ? "main" : "test3";
 
     const url = `http://api.blockcypher.com/v1/btc/test3/addrs/${address}?unspentOnly=true&confirmations=1&limit=800`;
     const res = await fetch(url);
@@ -47,7 +47,7 @@ export async function calcTargetUnspents(utxos, amount, feeRate, required, total
         14;
 
     let minerFee = parseInt(
-        //@ts-ignore
+        // @ts-ignore
         (Number(process.env.bitcoin_fee_rate) * bytes) / 1000, 10
     );
 

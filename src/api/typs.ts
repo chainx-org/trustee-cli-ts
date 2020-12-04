@@ -15,7 +15,7 @@ export class ChainPerties {
     ss58Format: number;
     tokenDecimals: number;
     tokenSymbol: string;
-    bitcoin_type: string;
+    bitcoinType: string;
 }
 
 export class WithdrawaItem {

@@ -3,7 +3,7 @@ import Api from '../api/chainx'
 import { remove0x } from '../utils'
 
 const colors = require('colors/safe');
-//const Table = require('cli-table3');
+// const Table = require('cli-table3');
 const api = Api.getInstance();
 const bitcoin = require("bitcoinjs-lib");
 
@@ -26,19 +26,11 @@ async function parseRawTxAndLog(rawTx) {
 }
 
 async function logSignedIntentions(trusteeList) {
-    //返回信托列表
-    const info = await api.getTrusteeSessionInfo();
+    // 返回信托列表
+    // const info = await api.getTrusteeSessionInfo();
 
     console.log("已签信托列表:\n");
-    for (let trustee of trusteeList) {
-        const [accountId, signed] = trustee;
-        if (signed) {
-            const targetIntention = info.trusteeList.filter(
-                account => account === accountId
-            );
-            console.log(`${targetIntention}`);
-        }
-    }
+
 }
 
 
@@ -53,8 +45,9 @@ module.exports = {
 
         const withdrawTx = await api.getTxByReadStorage();
 
-        if (strings.isBlank(withdrawTx.toString())) {
+        if (strings.isBlank(withdrawTx?.toString())) {
             console.log(colors.yellow('链上无代签原文'))
+            process.exit(0)
         } else {
             console.log("代签原文: \n", withdrawTx.tx);
             await parseRawTxAndLog(withdrawTx.tx);
@@ -66,6 +59,7 @@ module.exports = {
                 if (withdrawTx.sigState === "Finish") {
                     console.log(colors.red("签名已完成"))
                 }
+                process.exit(0)
             }
         }
     },

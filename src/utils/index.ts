@@ -9,8 +9,8 @@ export function remove0x(str) {
 export function isNull(str) {
     if (str === "") return true;
     if (JSON.stringify(str) === "{}") return true;
-    var regu = "^[ ]+$";
-    var re = new RegExp(regu);
+    let regu = "^[ ]+$";
+    let re = new RegExp(regu);
     return re.test(str);
 }
 

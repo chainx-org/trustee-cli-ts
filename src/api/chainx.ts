@@ -58,7 +58,7 @@ class Api {
     async getBtcNetworkState() {
         await this.ready()
         const { parentHash } = await this.api.rpc.chain.getHeader();
-        //@ts-ignore
+        // @ts-ignore
         const netWorkType = await this.api.query.xGatewayBitcoin.networkId.at(parentHash);
         if (netWorkType.toString() === "Testnet") {
             return "testnet";
@@ -74,7 +74,7 @@ class Api {
         const properties = plainToClass(ChainPerties, systemProperties.toJSON());
         const networkType = await this.getBtcNetworkState();
 
-        properties.bitcoin_type = networkType;
+        properties.bitcoinType = networkType;
 
         return properties;
     }
@@ -83,7 +83,7 @@ class Api {
         //  TODO: 处理分页问题
         // @ts-ignore
         await this.ready()
-        //@ts-ignore
+        // @ts-ignore
         const withdrawObject = await this.api.rpc.xgatewayrecords.withdrawalListByChain(
             "Bitcoin"
         );
@@ -96,7 +96,7 @@ class Api {
                 ...value
             });
         });
-        //@ts-ignore
+        // @ts-ignore
         return withdrawList;
     }
 
