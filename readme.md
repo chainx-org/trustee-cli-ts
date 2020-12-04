@@ -2,9 +2,7 @@
 
 A CLI for trustee-tools.
 
-## Customizing your CLI
 
-Check out the documentation at https://github.com/infinitered/gluegun/tree/master/docs.
 
 ## Publishing to NPM
 
