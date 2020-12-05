@@ -13,7 +13,6 @@ $ npm login
 $ npm whoami
 $ npm lint
 $ npm test
-(if typescript, run `npm run build` here)
 $ npm publish
 ```
 
