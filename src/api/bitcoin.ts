@@ -1,9 +1,9 @@
 const fetch = require("node-fetch");
 
 export async function getUnspents(address, network) {
-    // const net = network === "mainnet" ? "main" : "test3";
+    const net = network === "mainnet" ? "main" : "test3";
 
-    const url = `http://api.blockcypher.com/v1/btc/test3/addrs/${address}?unspentOnly=true&confirmations=1&limit=800`;
+    const url = `https://api.blockcypher.com/v1/btc/${net}/addrs/${address}?unspentOnly=true&confirmations=1&limit=800`;
     const res = await fetch(url);
     const response = await res.json();
     if (response.error) {
