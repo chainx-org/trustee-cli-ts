@@ -45,9 +45,9 @@ class Respond {
 
             console.table(normalizedOuts);
 
-            await parseRawTxAndLog(withdrawalTx.tx);
+            await this.parseRawTxAndLog(withdrawalTx.tx);
 
-            await sign(withdrawalTx.tx);
+            await this.sign(withdrawalTx.tx);
 
             if (!this.needSubmit) {
                 process.exit(0);
