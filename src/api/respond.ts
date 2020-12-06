@@ -7,7 +7,7 @@ require("console.table");
 const bitcoin = require("bitcoinjs-lib");
 const colors = require("colors")
 
-class Respond {
+export default class Respond {
     public api: Api;
     public needSubmit: boolean;
     public redeemScript: Buffer;
@@ -149,5 +149,3 @@ class Respond {
         });
     }
 }
-
-module.exports = Respond
