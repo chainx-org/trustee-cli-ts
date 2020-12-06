@@ -11,10 +11,14 @@ class ContstructTx {
     public bitcoinFeeRate: string;
     public minChange: string;
     public api: Api;
+    public needSign: boolean;
+    public needSubmit: boolean;
 
-    constructor() {
+    constructor(needSign: boolean, needSubmit: boolean) {
         this.bitcoinFeeRate = process.env.bitcoin_fee_rate;
         this.minChange = process.env.min_change;
+        this.needSign = needSign;
+        this.needSubmit = needSubmit;
         this.api = Api.getInstance();
     }
 
@@ -81,7 +85,7 @@ class ContstructTx {
             txb.addOutput(addr.toString(), change);
         }
 
-        const signed = await signIfRequired(txb, network);
+        const signed = await this.signIfRequired(txb, network);
 
         let rawTx;
         if (signed) {
@@ -96,7 +100,7 @@ class ContstructTx {
     }
 
     async signIfRequired(txb, network) {
-        if (!needSign) {
+        if (!this.needSign) {
             return false;
         }
 
@@ -105,7 +109,7 @@ class ContstructTx {
             process.exit(1);
         }
 
-        const info = await getTrusteeSessionInfo();
+        const info = await this.api.getTrusteeSessionInfo();
 
         const redeemScript = Buffer.from(
             remove0x(info.hotAddress.redeemScript.toString()),
@@ -126,7 +130,7 @@ class ContstructTx {
 
 
     async submitIfRequired(withdrawals, rawTx) {
-        if (!needSubmit) {
+        if (!this.needSubmit) {
             return;
         }
 
