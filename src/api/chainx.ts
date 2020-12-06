@@ -20,6 +20,10 @@ class Api {
 
     }
 
+    public getApi(): ApiPromise {
+        return this.api
+    }
+
     public static getInstance() {
         if (!Api.instance) {
             Api.instance = new Api();

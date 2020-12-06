@@ -14,7 +14,7 @@ export function isNull(str) {
     return re.test(str);
 }
 
-export function addOx(str) {
+export function add0x(str) {
     if (str.startsWith("0x")) {
         return str;
     } else {
