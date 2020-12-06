@@ -1,8 +1,8 @@
 import { GluegunToolbox } from 'gluegun'
 
 module.exports = {
-    name: 'init',
-    alias: ['init'],
+    name: 'create',
+    alias: ['create'],
     run: async (toolbox: GluegunToolbox) => {
         const {
             parameters,
@@ -10,9 +10,13 @@ module.exports = {
             print: { warning },
         } = toolbox
 
-        const name = parameters.first
+        const sign = parameters.first
+        const submit = parameters.second
+
+        console.log(`paramters 1: ${needSign}  paramters 2: ${needSubmit}`)
 
 
-        warning(`Generated file at models/${name}-model.ts`)
+        warning(`Generated file at models/-model.ts`)
+        process.exit(0)
     },
 }
