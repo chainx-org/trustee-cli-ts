@@ -2,7 +2,8 @@ import { Keyring } from '@polkadot/api'
 import Api from './chainx'
 import { getUnspents, pickUtxos } from './bitcoin'
 import { remove0x, add0x } from '../utils'
-import { WithDrawLimit } from './types';
+import { WithDrawLimit, WithdrawaItem } from './types';
+const { MultiSelect } = require('enquirer');
 
 
 require("dotenv").config()
@@ -15,6 +16,7 @@ export default class ContstructTx {
     public api: Api;
     public needSign: boolean;
     public needSubmit: boolean;
+    public ids: string[];
 
     constructor(needSubmit: boolean) {
         this.bitcoinFeeRate = process.env.bitcoin_fee_rate;
@@ -32,17 +34,70 @@ export default class ContstructTx {
         if (!process.env.min_change) {
             throw new Error("min_change 没有设置");
         }
-
     }
 
-    async construct() {
-        const list = await this.api.getBTCWithdrawList();
+    async promptSelectWithdraw() {
+        const withdrawList = await this.api.getBTCWithdrawList();
         const limit: WithDrawLimit = await this.api.getWithdrawLimit();
 
-        let filteredList = this.filterSmallWithdraw(list, limit.minimalWithdrawal);
+        let filteredList = this.filterSmallWithdraw(withdrawList, limit.minimalWithdrawal);
         filteredList = this.leaveOnelyApplying(filteredList);
 
         if (filteredList <= 0) {
+            console.log("暂无合法提现");
+            process.exit(0);
+        }
+
+        const normalizedOuts = filteredList.map(withdraw => {
+            const address = withdraw.addr;
+            const balance = Number(withdraw.balance) / Math.pow(10, 8);
+            const state = withdraw.state;
+            return { address, balance, state };
+        });
+
+        console.table(normalizedOuts);
+
+
+        const choiceList = []
+        filteredList.map(item => {
+            choiceList.push(
+                {
+                    name: `地址：${item.addr} 提现数量: ${Number(item.balance) / Math.pow(10, 8)} BTC  Applying : ${item.state}`,
+                    value: item
+                }
+            )
+        })
+
+        const prompt = new MultiSelect({
+            name: '构造提现',
+            message: '选择交易构造提现列表',
+            choices: choiceList,
+            result(names) {
+                return this.map(names);
+            }
+        });
+
+        let selectResult = await prompt.run();
+
+        const answer: WithdrawaItem[] = [];
+        Object.keys(selectResult).forEach((key: string) => {
+            answer.push(selectResult[key])
+        });
+
+        if (answer.length === 0) {
+            withdrawList.map(item => {
+                answer.push(item)
+            })
+        }
+        return answer;
+    }
+
+    async construct() {
+
+        const limit: WithDrawLimit = await this.api.getWithdrawLimit();
+        const filteredList = await this.promptSelectWithdraw();
+
+        if (filteredList.length <= 0) {
             console.log("暂无合法提现");
             process.exit(0);
         }
@@ -70,7 +125,7 @@ export default class ContstructTx {
     leaveOnelyApplying(list) {
         return list.filter(
             withdrawal =>
-                withdrawal.state === "Applying" || withdrawal.state === "Processing"
+                withdrawal.state === "Applying"
         );
     }
 
