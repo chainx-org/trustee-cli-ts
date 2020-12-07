@@ -1,11 +1,13 @@
 import { GluegunToolbox } from 'gluegun'
 import Api from '../api/chainx'
-import { remove0x } from '../utils'
+import { AlreadySigned } from '../api/types'
+import { remove0x, isNull } from '../utils'
 
 const colors = require('colors/safe');
 // const Table = require('cli-table3');
 const api = Api.getInstance();
 const bitcoin = require("bitcoinjs-lib");
+const Table = require('cli-table3');
 
 async function parseRawTxAndLog(rawTx) {
     const tx = bitcoin.Transaction.fromHex(remove0x(rawTx));
@@ -26,10 +28,36 @@ async function parseRawTxAndLog(rawTx) {
 }
 
 async function logSignedIntentions(trusteeList) {
-    // 返回信托列表
-    // const info = await api.getTrusteeSessionInfo();
 
-    console.log("已签信托列表:\n");
+    console.log(colors.red(`已签数量: ${trusteeList.length} \n`))
+    console.log("信托列表签名情况:\n");
+
+    const infoList = await Api.getInstance().getTrusteeSessionInfo();
+
+    const alreadySignedList: string[] = [];
+    for (let trustee of trusteeList) {
+        const [accountId, signed] = trustee;
+        if (signed) {
+            alreadySignedList.push(accountId)
+        }
+    }
+
+    const singedInfoList: AlreadySigned[] = [];
+    for (let info of infoList.trusteeList) {
+        singedInfoList.push({
+            accountId: info,
+            signed: !isNull(alreadySignedList.find(item => item === info))
+        })
+    }
+
+    const table = new Table({
+        head: ['id', 'accountId', 'signed']
+    });
+
+    singedInfoList.map((item, index) => {
+        table.push([index, item.accountId, item.signed])
+    })
+    console.log(colors.yellow(table.toString()))
 
 }
 
@@ -44,6 +72,8 @@ module.exports = {
         } = toolbox
 
         const withdrawTx = await api.getTxByReadStorage();
+
+        console.log(JSON.stringify(withdrawTx.trusteeList))
 
         if (strings.isBlank(withdrawTx?.toString())) {
             console.log(colors.yellow('链上无代签原文'))

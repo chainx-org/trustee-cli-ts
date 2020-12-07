@@ -15,6 +15,5 @@ module.exports = {
         constructTx.init()
         await constructTx.construct()
 
-        process.exit(0)
     },
 }

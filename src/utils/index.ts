@@ -8,6 +8,8 @@ export function remove0x(str) {
 
 export function isNull(str) {
     if (str === "") return true;
+    if (str === undefined) return true;
+    if (str === null) return true;
     if (JSON.stringify(str) === "{}") return true;
     let regu = "^[ ]+$";
     let re = new RegExp(regu);

@@ -1,7 +1,7 @@
 
 import { GluegunCommand } from 'gluegun'
 import Api from '../api/chainx'
-import { TrusteeSessionInfo } from '../api/typs';
+import { TrusteeSessionInfo } from '../api/types';
 
 
 const command: GluegunCommand = {

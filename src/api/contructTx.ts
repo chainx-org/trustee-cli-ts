@@ -2,11 +2,10 @@ import { Keyring } from '@polkadot/api'
 import Api from './chainx'
 import { getUnspents, pickUtxos } from './bitcoin'
 import { remove0x, add0x } from '../utils'
-import { WithDrawLimit } from './typs';
+import { WithDrawLimit } from './types';
 
 require("dotenv").config()
 require("console.table")
-//const colors = require('colors')
 const bitcoin = require("bitcoinjs-lib")
 
 export default class ContstructTx {
@@ -231,13 +230,12 @@ export default class ContstructTx {
                     }
                 });
             } else {
-                console.log(`item id：${item.id}`);
                 const extrinsic = this.api.getApi().tx["xGatewayBitcoin"]["createWithdrawTx"](
                     ids,
                     add0x(rawTx)
                 );
 
-                await extrinsic.signAndSend(alice, ({ events = [], status }) => {
+                extrinsic.signAndSend(alice, ({ events = [], status }) => {
                     console.log(`Current status is ${status.type}`);
                     if (status.isFinalized) {
                         console.log(

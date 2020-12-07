@@ -2,7 +2,7 @@ import { ApiPromise, WsProvider } from "@polkadot/api"
 import { options } from "@chainx-v2/api"
 import { assert } from "console";
 import { plainToClass } from 'class-transformer'
-import { TrusteeSessionInfo, ChainPerties, WithdrawaItem, WithDrawLimit, BtcWithdrawalProposal } from './typs'
+import { TrusteeSessionInfo, ChainPerties, WithdrawaItem, WithDrawLimit, BtcWithdrawalProposal } from './types'
 
 const ora = require('ora');
 require("dotenv").config();

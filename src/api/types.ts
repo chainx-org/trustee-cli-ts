@@ -40,3 +40,8 @@ export class BtcWithdrawalProposal {
     tx: string;
     trusteeList: [string, boolean];
 }
+
+export interface AlreadySigned {
+    accountId: string;
+    signed: boolean;
+}
