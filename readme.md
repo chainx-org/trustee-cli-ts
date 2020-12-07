@@ -24,7 +24,6 @@ trustee-tools info
 
 ```
 trustee-tools list
-
 ```
 
 ## 查看代签列表
