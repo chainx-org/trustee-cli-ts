@@ -4,14 +4,12 @@ A CLI for trustee-tools.
 
 
 
-## Publishing to NPM
-
-To package your CLI up for NPM, do this:
+## Init Environment
 
 ```shell
-$ npm login
-$ npm whoami
-$ npm lint
+$ yarn
+$ yarn run build
+$ yarn run link
 ```
 
 ## 查看信托信息
