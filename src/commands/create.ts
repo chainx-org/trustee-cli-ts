@@ -11,10 +11,9 @@ module.exports = {
             print: { warning },
         } = toolbox
 
-        const sign = parameters.first === 'sign'
-        const submit = parameters.second === 'submit'
+        const submit = parameters.first === 'submit'
 
-        const constructTx = new ContstructTx(sign, submit)
+        const constructTx = new ContstructTx(submit)
         constructTx.init()
         await constructTx.construct()
 

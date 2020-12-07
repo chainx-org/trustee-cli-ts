@@ -4,9 +4,10 @@ import { getUnspents, pickUtxos } from './bitcoin'
 import { remove0x, add0x } from '../utils'
 import { WithDrawLimit } from './typs';
 
-require("dotenv").config();
-require("console.table");
-const bitcoin = require("bitcoinjs-lib");
+require("dotenv").config()
+require("console.table")
+//const colors = require('colors')
+const bitcoin = require("bitcoinjs-lib")
 
 export default class ContstructTx {
     public bitcoinFeeRate: string;
@@ -15,10 +16,10 @@ export default class ContstructTx {
     public needSign: boolean;
     public needSubmit: boolean;
 
-    constructor(needSign: boolean, needSubmit: boolean) {
+    constructor(needSubmit: boolean) {
         this.bitcoinFeeRate = process.env.bitcoin_fee_rate;
         this.minChange = process.env.min_change;
-        this.needSign = needSign;
+        this.needSign = needSubmit;
         this.needSubmit = needSubmit;
         this.api = Api.getInstance();
     }
