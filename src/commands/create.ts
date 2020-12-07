@@ -12,9 +12,10 @@ module.exports = {
         } = toolbox
 
         const sign = parameters.first === 'sign'
-        const submit = parameters.second === 'second'
+        const submit = parameters.second === 'submit'
 
         const constructTx = new ContstructTx(sign, submit)
+        constructTx.init()
         constructTx.construct()
 
         // console.log(`paramters 1: ${needSign}  paramters 2: ${needSubmit}`)
