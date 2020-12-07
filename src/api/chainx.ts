@@ -2,7 +2,7 @@ import { ApiPromise, WsProvider } from "@polkadot/api"
 import { options } from "@chainx-v2/api"
 import { assert } from "console";
 import { plainToClass } from 'class-transformer'
-import { TrusteeSessionInfo, ChainPerties, WithdrawaItem } from './typs'
+import { TrusteeSessionInfo, ChainPerties, WithdrawaItem, WithDrawLimit } from './typs'
 
 const ora = require('ora');
 require("dotenv").config();
@@ -104,13 +104,14 @@ class Api {
         return withdrawList;
     }
 
-    async getWithdrawLimit() {
+    async getWithdrawLimit(): Promise<WithDrawLimit> {
         // TODO: Bitcoin asstId为1
         await this.ready()
         // @ts-ignore
         const limit = await this.api.rpc.xgatewaycommon.withdrawalLimit("1");
-        const json = JSON.parse(limit.toString());
-        return json;
+
+        const withdrawLimit = plainToClass(WithDrawLimit, limit.toJSON())
+        return withdrawLimit;
     }
 }
 

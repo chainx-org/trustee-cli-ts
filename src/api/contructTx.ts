@@ -2,6 +2,7 @@ import { Keyring } from '@polkadot/api'
 import Api from './chainx'
 import { getUnspents, pickUtxos } from './bitcoin'
 import { remove0x, add0x } from '../utils'
+import { WithDrawLimit } from './typs';
 
 require("dotenv").config();
 require("console.table");
@@ -35,7 +36,7 @@ export default class ContstructTx {
 
     async construct() {
         const list = await this.api.getBTCWithdrawList();
-        const limit = await this.api.getWithdrawLimit();
+        const limit: WithDrawLimit = await this.api.getWithdrawLimit();
 
         let filteredList = this.filterSmallWithdraw(list, limit.minimalWithdrawal);
         filteredList = this.leaveOnelyApplying(filteredList);

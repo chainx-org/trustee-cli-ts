@@ -28,3 +28,8 @@ export class WithdrawaItem {
     height: number;
     state: string;
 }
+
+export class WithDrawLimit {
+    minimalWithdrawal: string;
+    fee: string;
+}
