@@ -37,19 +37,14 @@ export default class ContstructTx {
         const list = await this.api.getBTCWithdrawList();
         const limit = await this.api.getWithdrawLimit();
 
-        console.log(`list: ${list} limit: ${limit}`)
-
         let filteredList = this.filterSmallWithdraw(list, limit.minimalWithdrawal);
         filteredList = this.leaveOnelyApplying(filteredList);
-
-        console.log(JSON.stringify(filteredList))
 
         if (filteredList <= 0) {
             console.log("暂无合法体现");
             process.exit(0);
         }
 
-        console.log("提现列表：+ " + JSON.stringify(filteredList));
         const normalizedOuts = filteredList.map(withdraw => {
             const address = withdraw.addr;
             const balance = Number(withdraw.balance) / Math.pow(10, 8);
