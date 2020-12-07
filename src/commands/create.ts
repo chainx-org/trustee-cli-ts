@@ -16,7 +16,7 @@ module.exports = {
 
         const constructTx = new ContstructTx(sign, submit)
         constructTx.init()
-        constructTx.construct()
+        await constructTx.construct()
 
         // console.log(`paramters 1: ${needSign}  paramters 2: ${needSubmit}`)
 

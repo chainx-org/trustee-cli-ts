@@ -13,7 +13,7 @@ const command: GluegunCommand = {
     const api = Api.getInstance();
     const session: TrusteeSessionInfo = await api.getTrusteeSessionInfo()
     console.log(colors.red(session.trusteeList))
-    print.info('Welcome to your CLI')
+    print.info('Welcome to Trustee-Tools CLI')
     process.exit(0)
   },
 }

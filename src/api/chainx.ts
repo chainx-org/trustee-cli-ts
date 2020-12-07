@@ -91,6 +91,7 @@ class Api {
         const withdrawObject = await this.api.rpc.xgatewayrecords.withdrawalListByChain(
             "Bitcoin"
         );
+        console.log(111)
         const withdrawList: WithdrawaItem[] = [];
         const withdrawItem = plainToClass(WithdrawaItem, withdrawObject.toJSON())
         Object.entries(withdrawItem).forEach(([key, value]) => {

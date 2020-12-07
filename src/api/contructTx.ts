@@ -37,8 +37,12 @@ export default class ContstructTx {
         const list = await this.api.getBTCWithdrawList();
         const limit = await this.api.getWithdrawLimit();
 
+        console.log(`list: ${list} limit: ${limit}`)
+
         let filteredList = this.filterSmallWithdraw(list, limit.minimalWithdrawal);
         filteredList = this.leaveOnelyApplying(filteredList);
+
+        console.log(JSON.stringify(filteredList))
 
         if (filteredList <= 0) {
             console.log("暂无合法体现");
@@ -96,8 +100,8 @@ export default class ContstructTx {
             34 * (withdrawals.length + 1) +
             14;
         let minerFee = parseInt(
-            //@ts-ignore
-            (Number(process.env.bitcoin_fee_rate) * bytes) / 1000
+            // @ts-ignore
+            (Number(process.env.bitcoin_fee_rate) * bytes) / 1000, 10
         );
 
         while (inputSum < outSum + minerFee) {
@@ -200,11 +204,11 @@ export default class ContstructTx {
 
         withdrawals.forEach(async (item, index) => {
             if (item.state === "Processing") {
-                const extrinsic = await this.api.getApi().tx["xGatewayBitcoin"]["signWithdrawTx"](
+                const extrinsic = this.api.getApi().tx["xGatewayBitcoin"]["signWithdrawTx"](
                     add0x(rawTx)
                 );
 
-                extrinsic.signAndSend(alice, ({ events = [], status }) => {
+                await extrinsic.signAndSend(alice, ({ events = [], status }) => {
                     console.log(`Current status is ${status.type}`);
                     if (status.isFinalized) {
                         console.log(
@@ -212,7 +216,7 @@ export default class ContstructTx {
                         );
                         // Loop through Vec<EventRecord> to display all events
                         events.forEach(({ phase, event: { data, method, section } }) => {
-                            //console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+                            // console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
                             if (method === "ExtrinsicFailed") {
                                 console.error(
                                     `提交ChainX信托签名交易失败 \n ${phase}: ${section}.${method}:: ${data}`
@@ -229,12 +233,12 @@ export default class ContstructTx {
                 });
             } else {
                 console.log(`item id：${item.id}`);
-                const extrinsic = await this.api.getApi().tx["xGatewayBitcoin"]["createWithdrawTx"](
+                const extrinsic = this.api.getApi().tx["xGatewayBitcoin"]["createWithdrawTx"](
                     ids,
                     add0x(rawTx)
                 );
 
-                extrinsic.signAndSend(alice, ({ events = [], status }) => {
+                await extrinsic.signAndSend(alice, ({ events = [], status }) => {
                     console.log(`Current status is ${status.type}`);
                     if (status.isFinalized) {
                         console.log(
@@ -242,7 +246,7 @@ export default class ContstructTx {
                         );
                         // Loop through Vec<EventRecord> to display all events
                         events.forEach(({ phase, event: { data, method, section } }) => {
-                            //console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+                            // console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
                             if (method === "ExtrinsicFailed") {
                                 console.error(
                                     `提交ChainX信托签名交易失败 \n ${phase}: ${section}.${method}:: ${data}`
@@ -259,7 +263,7 @@ export default class ContstructTx {
                 });
             }
         });
-        await this.api.getApi().tx["xGatewayBitcoin"]["createWithdrawTx"](
+        this.api.getApi().tx["xGatewayBitcoin"]["createWithdrawTx"](
             ids,
             add0x(rawTx)
         );

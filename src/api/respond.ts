@@ -124,7 +124,7 @@ export default class Respond {
         const keyring = new Keyring({ type: "sr25519" });
         const alice = keyring.addFromUri(process.env.chainx_private_key);
 
-        const extrinsic = await this.api.getApi().tx["xGatewayBitcoin"]["signWithdrawTx"](
+        const extrinsic = this.api.getApi().tx["xGatewayBitcoin"]["signWithdrawTx"](
             add0x(rawTx)
         );
 
@@ -134,7 +134,7 @@ export default class Respond {
                 console.log(`Transaction included at blockHash ${status.asFinalized}`);
                 // Loop through Vec<EventRecord> to display all events
                 events.forEach(({ phase, event: { data, method, section } }) => {
-                    //console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+                    // console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
                     if (method === "ExtrinsicFailed") {
                         console.error(
                             `提交ChainX信托签名交易失败 \n ${phase}: ${section}.${method}:: ${data}`
