@@ -98,13 +98,13 @@ export default class Respond {
                 txb.sign(i, keyPair, this.redeemScript);
             }
         } catch (e) {
-            console.error("签名出错：", e);
+            console.error(colors.red("签名出错：", e));
             process.exit(0);
         }
 
         const signedRawTx = txb.build().toHex();
-        console.log("签名后原文:");
-        console.log(signedRawTx);
+        console.log(colors.green("签名后原文:"));
+        console.log(colors.green(signedRawTx));
 
         await this.submitIfRequired(signedRawTx);
     }

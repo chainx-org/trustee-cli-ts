@@ -15,9 +15,5 @@ module.exports = {
         const respond = new Respond(submit)
         await respond.init()
         await respond.respond()
-
-        console.log(`paramters 1: ${submit} `)
-
-        process.exit(0)
     },
 }
