@@ -7,7 +7,7 @@ require("dotenv").config();
 require("console.table");
 const bitcoin = require("bitcoinjs-lib");
 
-class ContstructTx {
+export default class ContstructTx {
     public bitcoinFeeRate: string;
     public minChange: string;
     public api: Api;
@@ -20,6 +20,46 @@ class ContstructTx {
         this.needSign = needSign;
         this.needSubmit = needSubmit;
         this.api = Api.getInstance();
+    }
+
+    async construct() {
+        const list = await this.api.getBTCWithdrawList();
+        const limit = await this.api.getWithdrawLimit();
+
+        let filteredList = this.filterSmallWithdraw(list, limit.minimalWithdrawal);
+        filteredList = this.leaveOnelyApplying(filteredList);
+
+        if (filteredList <= 0) {
+            console.log("暂无合法体现");
+            process.exit(0);
+        }
+
+        console.log("提现列表：+ " + JSON.stringify(filteredList));
+        const normalizedOuts = filteredList.map(withdraw => {
+            const address = withdraw.addr;
+            const balance = Number(withdraw.balance) / Math.pow(10, 8);
+            const state = withdraw.state;
+            return { address, balance, state };
+        });
+
+        console.table(normalizedOuts);
+
+        await this.composeBtcTx(filteredList, limit.fee);
+
+        if (!this.needSubmit) {
+            process.exit(0);
+        }
+    }
+
+    filterSmallWithdraw(list, minimal) {
+        return list.filter(withdrawal => withdrawal.balance >= minimal);
+    }
+
+    leaveOnelyApplying(list) {
+        return list.filter(
+            withdrawal =>
+                withdrawal.state === "Applying" || withdrawal.state === "Processing"
+        );
     }
 
     async composeBtcTx(withdrawals, fee) {
@@ -242,5 +282,3 @@ class ContstructTx {
         console.table([{ all: all / Math.pow(10, 8) + " BTC" }]);
     }
 }
-
-export default ContstructTx
