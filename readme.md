@@ -4,16 +4,26 @@ A CLI for trustee-tools.
 
 
 
-## Publishing to NPM
-
-To package your CLI up for NPM, do this:
+## Init Environment
 
 ```shell
-$ npm login
-$ npm whoami
-$ npm lint
+$ yarn
+$ yarn run build
+$ yarn run link
 ```
 
+## 配置env
+
+```
+bitcoin_fee_rate=29422
+# 当提现找零 < 该值时，就不要找零了
+min_change=1000
+chainx_ws_addr=wss://testnet-2.chainx.org/ws
+# 比特币私钥(WIF格式)
+bitcoin_private_key=cN3Bw8z7o3DSQxPimBXt3M3xnATaq3nW7duisgMFwMYLGVJ4CQnT
+#ChainX信托账户私钥
+chainx_private_key=beauty quiz evil process wait roof picnic buzz drop knock token such//1//validator
+```
 ## 查看信托信息
 
 ```
