@@ -33,3 +33,10 @@ export class WithDrawLimit {
     minimalWithdrawal: string;
     fee: string;
 }
+
+export class BtcWithdrawalProposal {
+    sigState: string;
+    withdrawalIdList: number[];
+    tx: string;
+    trusteeList: [string, boolean];
+}

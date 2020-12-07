@@ -2,7 +2,7 @@ import { ApiPromise, WsProvider } from "@polkadot/api"
 import { options } from "@chainx-v2/api"
 import { assert } from "console";
 import { plainToClass } from 'class-transformer'
-import { TrusteeSessionInfo, ChainPerties, WithdrawaItem, WithDrawLimit } from './typs'
+import { TrusteeSessionInfo, ChainPerties, WithdrawaItem, WithDrawLimit, BtcWithdrawalProposal } from './typs'
 
 const ora = require('ora');
 require("dotenv").config();
@@ -47,16 +47,17 @@ class Api {
     }
 
     // 获取Storage中信托提现的Proposal状态
-    public async getTxByReadStorage() {
+    public async getTxByReadStorage(): Promise<BtcWithdrawalProposal | null> {
         await this.ready()
         const { parentHash } = await this.api.rpc.chain.getHeader();
         const btcTxLists = await this.api.query.xGatewayBitcoin.withdrawalProposal.at(
             parentHash
         );
-        if (JSON.stringify(btcTxLists) !== "null") {
-            // @ts-ignore
-            return JSON.parse(btcTxLists);
+        if (JSON.stringify(btcTxLists) === "null") {
+            return null;
         }
+
+        return plainToClass(BtcWithdrawalProposal, JSON.parse(JSON.stringify(btcTxLists)))
     }
 
     async getBtcNetworkState() {
