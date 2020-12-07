@@ -33,6 +33,25 @@ trustee-tools list
 trustee-tools tx
 ```
 
+## 构造提现交易原文并提交上链
+
+```
+trustee-tools  create submit
+```
+
+## 构造提现交易原文不上链
+
+```
+trustee-tools  create
+```
+
+## 响应待签原文并提交上链
+
+```
+trustee-tools  respond submit
+
+```
+
 # License
 
 MIT - see LICENSE
