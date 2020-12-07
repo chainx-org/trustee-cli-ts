@@ -36,6 +36,8 @@
     "@polkadot/util": "^4.2.1",
     "@polkadot/util-crypto": "^4.2.1",
     "bitcoinjs-lib": "4.0.2",
+    "bitcoinjs-lib-zcash": "^3.6.1",
+    "bitcore-lib": "^8.23.1",
     "class-transformer": "^0.3.1",
     "cli-table3": "^0.6.0",
     "colors": "^1.4.0",

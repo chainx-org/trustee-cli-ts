@@ -42,7 +42,7 @@ export default class ContstructTx {
         filteredList = this.leaveOnelyApplying(filteredList);
 
         if (filteredList <= 0) {
-            console.log("暂无合法体现");
+            console.log("暂无合法提现");
             process.exit(0);
         }
 
@@ -235,7 +235,7 @@ export default class ContstructTx {
                     add0x(rawTx)
                 );
 
-                extrinsic.signAndSend(alice, ({ events = [], status }) => {
+                await extrinsic.signAndSend(alice, ({ events = [], status }) => {
                     console.log(`Current status is ${status.type}`);
                     if (status.isFinalized) {
                         console.log(
