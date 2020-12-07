@@ -22,6 +22,17 @@ export default class ContstructTx {
         this.api = Api.getInstance();
     }
 
+    init() {
+        if (!process.env.bitcoin_fee_rate) {
+            throw new Error("bitcoin_fee_rate 没有设置");
+        }
+
+        if (!process.env.min_change) {
+            throw new Error("min_change 没有设置");
+        }
+
+    }
+
     async construct() {
         const list = await this.api.getBTCWithdrawList();
         const limit = await this.api.getWithdrawLimit();
@@ -248,7 +259,7 @@ export default class ContstructTx {
                 });
             }
         });
-        const extrinsic = await this.api.getApi().tx["xGatewayBitcoin"]["createWithdrawTx"](
+        await this.api.getApi().tx["xGatewayBitcoin"]["createWithdrawTx"](
             ids,
             add0x(rawTx)
         );
