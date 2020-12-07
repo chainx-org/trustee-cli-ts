@@ -62,7 +62,7 @@ export default class Respond {
 
         const properties = await this.api.getChainProperties();
         const network =
-            properties["bitcoin_type"] === "mainnet"
+            properties.bitcoinType === "mainnet"
                 ? bitcoin.networks.bitcoin
                 : bitcoin.networks.testnet;
 
@@ -81,7 +81,7 @@ export default class Respond {
     async sign(rawTx) {
         const properties = await this.api.getChainProperties();
         const network =
-            properties["bitcoin_type"] === "mainnet"
+            properties.bitcoinType === "mainnet"
                 ? bitcoin.networks.bitcoin
                 : bitcoin.networks.testnet;
 

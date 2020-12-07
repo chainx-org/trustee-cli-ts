@@ -77,6 +77,7 @@ export default class ContstructTx {
         const info = await this.api.getTrusteeSessionInfo();
         const properties = await this.api.getChainProperties();
 
+
         const { addr } = info.hotAddress;
 
         const required = info.threshold;
@@ -117,8 +118,9 @@ export default class ContstructTx {
         this.logInputs(targetInputs);
         this.logOutputs(withdrawals);
 
+
         const network =
-            properties["bitcoin_type"] === "mainnet"
+            properties.bitcoinType === "mainnet"
                 ? bitcoin.networks.bitcoin
                 : bitcoin.networks.testnet;
 
@@ -167,7 +169,7 @@ export default class ContstructTx {
             "hex"
         );
 
-        console.log(`redeemScript... ${info.hotAddress.redeemScript.toString()}`);
+        console.log(`redeemScript... ${info.hotAddress.redeemScript.toString()} network........ ${JSON.stringify(network)}`);
         const keyPair = bitcoin.ECPair.fromWIF(
             process.env.bitcoin_private_key,
             network
