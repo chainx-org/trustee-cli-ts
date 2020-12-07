@@ -6,9 +6,7 @@ module.exports = {
     alias: ['create'],
     run: async (toolbox: GluegunToolbox) => {
         const {
-            parameters,
-            // template: { generate },
-            print: { warning },
+            parameters
         } = toolbox
 
         const submit = parameters.first === 'submit'
@@ -17,10 +15,6 @@ module.exports = {
         constructTx.init()
         await constructTx.construct()
 
-        // console.log(`paramters 1: ${needSign}  paramters 2: ${needSubmit}`)
-
-
-        warning(`Generated file at models/-model.ts`)
         process.exit(0)
     },
 }
