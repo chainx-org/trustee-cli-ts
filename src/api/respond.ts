@@ -139,10 +139,12 @@ export default class Respond {
                         console.error(
                             `提交ChainX信托签名交易失败 \n ${phase}: ${section}.${method}:: ${data}`
                         );
+                        process.exit(0);
                     } else if (method === "ExtrinsicSuccess") {
                         console.log(
                             `提交信托签名交易成功 \n ${phase}: ${section}.${method}:: ${data}`
                         );
+                        process.exit(0);
                     }
                 });
             }

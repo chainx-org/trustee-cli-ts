@@ -1,7 +1,8 @@
 import { GluegunToolbox } from 'gluegun'
 import ContstructTx from '../api/contructTx'
-//import TrezorConnector from '../multisign/trezor'
-//import Ledger from '../multisign/ledger'
+import TrezorConnector from '../multisign/trezor'
+import Ledger from '../multisign/ledger'
+import { isNull } from '../utils';
 const { Select } = require('enquirer');
 
 
@@ -26,16 +27,36 @@ module.exports = {
             parameters
         } = toolbox
 
-        const submit = parameters.first === 'sign'
-        // const sign = parameters.second === 'submit'
+        let sign: boolean = parameters.first === 'sign';
+        let submit: boolean = parameters.second === 'submit' || parameters.first === 'submit';
+
+        let raw = '';
+        if (parameters.first === 'submit') {
+            if (isNull(parameters.second)) {
+                console.error('请输入交易原文');
+                process.exit(0);
+            } else {
+                raw = parameters.second;
+            }
+        }
 
         const selectDevice = await promtSelectDevice()
 
-        console.log(selectDevice)
+        let device: any = null;
+        let type: string = 'privateKey'
 
+        if (selectDevice === 'trezor') {
+            const trezor = new TrezorConnector();
+            await trezor.init()
+            device = trezor;
 
-        const constructTx = new ContstructTx(submit)
-        constructTx.init()
+        } else if (selectDevice === 'ledger') {
+            const ledger = new Ledger()
+            device = ledger;
+        }
+
+        const constructTx = new ContstructTx(sign, submit, raw)
+        constructTx.init(device, type)
         await constructTx.construct()
 
     },

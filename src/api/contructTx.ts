@@ -17,16 +17,20 @@ export default class ContstructTx {
     public needSign: boolean;
     public needSubmit: boolean;
     public ids: string[];
+    public device: any;
+    public deviceType: string;
+    public raw: string;
 
-    constructor(needSubmit: boolean) {
+    constructor(needSign: boolean, needSubmit: boolean, raw?: string) {
         this.bitcoinFeeRate = process.env.bitcoin_fee_rate;
         this.minChange = process.env.min_change;
-        this.needSign = needSubmit;
+        this.needSign = needSign;
         this.needSubmit = needSubmit;
+        this.raw = raw;
         this.api = Api.getInstance();
     }
 
-    init() {
+    init(device: any, deviceType: string) {
         if (!process.env.bitcoin_fee_rate) {
             throw new Error("bitcoin_fee_rate 没有设置");
         }
@@ -34,6 +38,9 @@ export default class ContstructTx {
         if (!process.env.min_change) {
             throw new Error("min_change 没有设置");
         }
+
+        this.device = device;
+        this.deviceType = deviceType;
     }
 
     async promptSelectWithdraw() {
@@ -133,7 +140,6 @@ export default class ContstructTx {
         const info = await this.api.getTrusteeSessionInfo();
         const properties = await this.api.getChainProperties();
 
-
         const { addr } = info.hotAddress;
 
         const required = info.threshold;
@@ -169,6 +175,7 @@ export default class ContstructTx {
         if (change < Number(process.env.min_change)) {
             change = 0;
         }
+
 
         this.logMinerFee(minerFee);
         this.logInputs(targetInputs);
@@ -226,6 +233,7 @@ export default class ContstructTx {
         );
 
         console.log(`redeemScript... ${info.hotAddress.redeemScript.toString()} network........ ${JSON.stringify(network)}`);
+
         const keyPair = bitcoin.ECPair.fromWIF(
             process.env.bitcoin_private_key,
             network
