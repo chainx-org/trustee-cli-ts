@@ -6,6 +6,7 @@ const bs58check = require("bs58check");
 const { getPubKeysFromRedeemScript } = require("./bitcoin-utils");
 const bitcore = require("bitcore-lib");
 const { getRedeemScriptFromRaw } = require("./bitcoin-utils");
+const ora = require('ora');
 
 const hardeningConstant = 0x80000000;
 const mainnetPath = [
@@ -174,29 +175,43 @@ function constructPreTxs(inputsArr) {
 }
 
 class TrezorConnector extends EventEmitter {
+
+    public list: any;
+    public device: any;
     constructor() {
         super();
-
         this.list = new trezor.DeviceList({ debug: false });
-        this.list.on("connect", device => {
-            // FIXME: 这里没有考虑多个设备的情况
-            this.device = device;
-            this.emit("connect", device);
+    }
 
-            device.on("disconnect", () => {
-                this.device.removeAllListeners();
-                this.device = null;
-                this.emit("disconnect");
+    async init() {
+
+        const spinner = ora('trezor connect init..').start();
+        return new Promise((resolve) => {
+            this.list.on("connect", device => {
+                // FIXME: 这里没有考虑多个设备的情况
+
+                this.device = device
+
+                spinner.stop();
+                resolve(device)
+
+                // device.on("disconnect", () => {
+                //     this.device.removeAllListeners();
+                //     this.device = null;
+                //     this.emit("disconnect");
+                // });
+
+                // device.on("button", code => {
+                //     this.emit("button", code);
+                // });
+
+                // device.on("pin", (type, callback) => {
+                //     this.emit("pin", type, callback);
+                // });
             });
 
-            device.on("button", code => {
-                this.emit("button", code);
-            });
+        })
 
-            device.on("pin", (type, callback) => {
-                this.emit("pin", type, callback);
-            });
-        });
     }
 
     isConnected() {
@@ -253,6 +268,5 @@ class TrezorConnector extends EventEmitter {
     }
 }
 
-const connector = new TrezorConnector();
 
-export default connector
+export default TrezorConnector
