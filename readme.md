@@ -3,13 +3,13 @@
 A CLI for trustee-tools.
 
 
-
 ## Init Environment
 
 ```shell
 $ yarn
 $ yarn run build
 $ yarn run link
+$ cp .env.example .env
 ```
 
 ## 配置env
