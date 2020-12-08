@@ -29,6 +29,11 @@ async function parseRawTxAndLog(rawTx) {
 
 async function logSignedIntentions(trusteeList) {
 
+    if (!trusteeList) {
+
+        return;
+    }
+
     console.log(colors.red(`已签数量: ${trusteeList.length} \n`))
     console.log("信托列表签名情况:\n");
 
@@ -66,16 +71,11 @@ module.exports = {
     name: 'tx',
     alias: ['t'],
     run: async (toolbox: GluegunToolbox) => {
-        const {
-            // parameters,
-            strings
-        } = toolbox
+
 
         const withdrawTx = await api.getTxByReadStorage();
 
-        console.log(JSON.stringify(withdrawTx.trusteeList))
-
-        if (strings.isBlank(withdrawTx?.toString())) {
+        if (withdrawTx === null || withdrawTx.trusteeList === null) {
             console.log(colors.yellow('链上无代签原文'))
             process.exit(0)
         } else {
