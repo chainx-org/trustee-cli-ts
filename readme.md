@@ -45,7 +45,7 @@ trustee-tools tx
 ## 构造提现交易原文并提交上链
 
 ```
-trustee-tools  create submit
+trustee-tools  create submit sign
 ```
 
 ## 构造提现交易原文不上链
