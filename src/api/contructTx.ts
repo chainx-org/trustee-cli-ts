@@ -219,6 +219,7 @@ export default class ContstructTx {
         if (!this.needSign) {
             return false;
         }
+        console.log(JSON.stringify(txb))
 
         if (!process.env.bitcoin_private_key) {
             console.error("没有设置bitcoin_private_key");
