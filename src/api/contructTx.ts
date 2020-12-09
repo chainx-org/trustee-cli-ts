@@ -20,6 +20,7 @@ export default class ContstructTx {
     public device: any;
     public deviceType: string;
     public raw: string;
+    public ss58format: number;
 
     constructor(needSign: boolean, needSubmit: boolean, raw?: string) {
         this.bitcoinFeeRate = process.env.bitcoin_fee_rate;
@@ -28,6 +29,7 @@ export default class ContstructTx {
         this.needSubmit = needSubmit;
         this.raw = raw;
         this.api = Api.getInstance();
+        this.ss58format = 42;
     }
 
     init(device: any, deviceType: string) {
@@ -187,6 +189,12 @@ export default class ContstructTx {
                 ? bitcoin.networks.bitcoin
                 : bitcoin.networks.testnet;
 
+        if (properties.bitcoinType === "mainnet") {
+            this.ss58format = 44
+        } else {
+            this.ss58format = 42
+        }
+
         const txb = new bitcoin.TransactionBuilder(network);
         txb.setVersion(1);
 
@@ -259,7 +267,8 @@ export default class ContstructTx {
             process.exit(1);
         }
 
-        const keyring = new Keyring({ type: "sr25519" });
+        const keyring = new Keyring({ type: "ed25519" });
+        keyring.setSS58Format(this.ss58format)
         const alice = keyring.addFromUri(process.env.chainx_private_key);
         const ids = withdrawals.map(withdrawal => withdrawal.id);
 

@@ -61,6 +61,12 @@ trustee-tools  respond submit
 
 ```
 
+## 热转冷
+
+```
+trustee-tools  tc
+```
+
 # License
 
 MIT - see LICENSE
