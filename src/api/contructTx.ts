@@ -5,7 +5,7 @@ import { remove0x, add0x } from '../utils'
 import { WithDrawLimit, WithdrawaItem } from './types';
 const { MultiSelect } = require('enquirer');
 
-
+const colors = require('colors')
 require("dotenv").config()
 require("console.table")
 const bitcoin = require("bitcoinjs-lib")
@@ -270,6 +270,8 @@ export default class ContstructTx {
         const keyring = new Keyring({ type: "ed25519" });
         keyring.setSS58Format(this.ss58format)
         const alice = keyring.addFromUri(process.env.chainx_private_key);
+
+        console.log(colors.red(`信托账户地址: ${alice.address}`))
         const ids = withdrawals.map(withdrawal => withdrawal.id);
 
         console.log("idx..." + JSON.stringify(ids));
