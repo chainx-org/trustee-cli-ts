@@ -93,15 +93,17 @@ export default class ContstructTx {
             answer.push(selectResult[key])
         });
 
-        if (answer.length === 0) {
-            withdrawList.map(item => {
-                answer.push(item)
-            })
-        }
+
         return answer;
     }
 
     async construct() {
+
+        const keyring = new Keyring({ type: "ed25519" });
+        keyring.setSS58Format(42)
+        const alice = keyring.addFromUri(process.env.chainx_private_key);
+
+        console.log(colors.red(`信托账户地址: ${alice.address}`))
 
         const limit: WithDrawLimit = await this.api.getWithdrawLimit();
         const filteredList = await this.promptSelectWithdraw();
