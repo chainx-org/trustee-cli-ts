@@ -62,7 +62,6 @@ export default class ContstructTx {
 
         console.table(normalizedOuts);
 
-
         const choiceList = []
         filteredList.map(item => {
             choiceList.push(
@@ -88,7 +87,6 @@ export default class ContstructTx {
         Object.keys(selectResult).forEach((key: string) => {
             answer.push(selectResult[key])
         });
-
 
         return answer;
     }
