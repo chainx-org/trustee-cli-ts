@@ -3,6 +3,9 @@
 A CLI for trustee-tools.
 
 
+[UI信托工具下载](https://chainx.oss-cn-beijing.aliyuncs.com/ChainX%20Wallet%20for%20Trustee-2.0.1.dmg?Expires=1607590467&OSSAccessKeyId=TMP.3KhyqjuNDZN4THF1XZVLoTfVZDFFkruTVummvgqh6AbdeqwBKevtc6SnPHtH21RNLwqn99hdFHtN7QvcSVf5zCNp8tC6DK&Signature=3alLoATLl5%2FxfYYOlldndqpeH1g%3D&versionId=CAEQDhiBgMCki8mushciIGRjOThmNTIzOTZjNDQ5ODM5YWM4YTRkZWRkOTY0Yzdh&response-content-type=application%2Foctet-stream)
+
+
 ## Init Environment
 
 ```shell
