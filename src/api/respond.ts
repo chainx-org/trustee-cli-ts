@@ -1,7 +1,5 @@
-import { Keyring } from '@polkadot/api'
 import Api from './chainx'
 import { remove0x, add0x, isNull } from '../utils'
-
 require("dotenv").config();
 require("console.table");
 const bitcoin = require("bitcoinjs-lib");
@@ -121,8 +119,8 @@ export default class Respond {
             process.exit(1);
         }
 
-        const keyring = new Keyring({ type: "sr25519" });
-        const alice = keyring.addFromUri(process.env.chainx_private_key);
+        const alice = await this.api.getAccountKeyring();
+        console.log(`当前信托账户: ${alice}`)
 
         const extrinsic = this.api.getApi().tx["xGatewayBitcoin"]["signWithdrawTx"](
             add0x(rawTx)

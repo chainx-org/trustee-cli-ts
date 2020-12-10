@@ -1,4 +1,4 @@
-import { ApiPromise, WsProvider } from "@polkadot/api"
+import { ApiPromise, WsProvider, Keyring } from "@polkadot/api"
 import { options } from "@chainx-v2/api"
 import { assert } from "console";
 import { plainToClass } from 'class-transformer'
@@ -22,6 +22,20 @@ class Api {
 
     public getApi(): ApiPromise {
         return this.api
+    }
+
+    public async getAccountKeyring() {
+        if (!process.env.chainx_private_key) {
+            assert(true, "没有设置ChainX信托账户私钥")
+        }
+        await this.api.isReady
+        const systemProperties = await this.api.rpc.system.properties();
+
+        const properties = plainToClass(ChainPerties, systemProperties.toJSON());
+        const keyring = new Keyring({ type: "ed25519" });
+        keyring.setSS58Format(properties.ss58Format)
+        const account = keyring.addFromUri(process.env.chainx_private_key);
+        return account;
     }
 
     public static getInstance() {

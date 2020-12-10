@@ -1,10 +1,8 @@
-import { Keyring } from '@polkadot/api'
 import Api from './chainx'
 import { getUnspents, pickUtxos } from './bitcoin'
 import { remove0x, add0x } from '../utils'
 import { WithDrawLimit, WithdrawaItem } from './types';
 const { MultiSelect } = require('enquirer');
-
 const colors = require('colors')
 require("dotenv").config()
 require("console.table")
@@ -99,11 +97,8 @@ export default class ContstructTx {
 
     async construct() {
 
-        const keyring = new Keyring({ type: "ed25519" });
-        keyring.setSS58Format(42)
-        const alice = keyring.addFromUri(process.env.chainx_private_key);
 
-        console.log(colors.red(`信托账户地址: ${alice.address}`))
+        console.log(colors.red(`信托账户地址: ${(await this.api.getAccountKeyring()).address}`))
 
         const limit: WithDrawLimit = await this.api.getWithdrawLimit();
         const filteredList = await this.promptSelectWithdraw();
@@ -269,45 +264,14 @@ export default class ContstructTx {
             process.exit(1);
         }
 
-        const keyring = new Keyring({ type: "ed25519" });
-        keyring.setSS58Format(this.ss58format)
-        const alice = keyring.addFromUri(process.env.chainx_private_key);
-
+        const alice = await this.api.getAccountKeyring();
         console.log(colors.red(`信托账户地址: ${alice.address}`))
         const ids = withdrawals.map(withdrawal => withdrawal.id);
 
         console.log("idx..." + JSON.stringify(ids));
 
         withdrawals.forEach(async (item, index) => {
-            if (item.state === "Processing") {
-                const extrinsic = this.api.getApi().tx["xGatewayBitcoin"]["signWithdrawTx"](
-                    add0x(rawTx)
-                );
-
-                await extrinsic.signAndSend(alice, ({ events = [], status }) => {
-                    console.log(`Current status is ${status.type}`);
-                    if (status.isFinalized) {
-                        console.log(
-                            `Transaction included at blockHash ${status.asFinalized}`
-                        );
-                        // Loop through Vec<EventRecord> to display all events
-                        events.forEach(({ phase, event: { data, method, section } }) => {
-                            // console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
-                            if (method === "ExtrinsicFailed") {
-                                console.error(
-                                    `提交ChainX信托签名交易失败 \n ${phase}: ${section}.${method}:: ${data}`
-                                );
-                                process.exit(0);
-                            } else if (method === "ExtrinsicSuccess") {
-                                console.log(
-                                    `提交信托签名交易成功 \n ${phase}: ${section}.${method}:: ${data}`
-                                );
-                                process.exit(0);
-                            }
-                        });
-                    }
-                });
-            } else {
+            if (item.state === "Applying") {
                 const extrinsic = this.api.getApi().tx["xGatewayBitcoin"]["createWithdrawTx"](
                     ids,
                     add0x(rawTx)
@@ -338,10 +302,6 @@ export default class ContstructTx {
                 });
             }
         });
-        this.api.getApi().tx["xGatewayBitcoin"]["createWithdrawTx"](
-            ids,
-            add0x(rawTx)
-        );
     }
 
     logMinerFee(minerFee) {

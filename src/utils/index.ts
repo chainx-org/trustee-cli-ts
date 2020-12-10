@@ -1,4 +1,4 @@
-export function remove0x(str) {
+export function remove0x(str: string): string {
     if (str.startsWith("0x")) {
         return str.slice(2);
     } else {
@@ -6,7 +6,7 @@ export function remove0x(str) {
     }
 }
 
-export function isNull(str) {
+export function isNull(str): boolean {
     if (str === "") return true;
     if (str === undefined) return true;
     if (str === null) return true;
@@ -16,7 +16,7 @@ export function isNull(str) {
     return re.test(str);
 }
 
-export function add0x(str) {
+export function add0x(str: string): string {
     if (str.startsWith("0x")) {
         return str;
     } else {
