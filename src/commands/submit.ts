@@ -5,8 +5,8 @@ import { isNull } from '../utils'
 const colors = require('colors')
 
 module.exports = {
-    name: 'submit',
-    alias: ['submit'],
+    name: 'submitTx',
+    alias: ['submitTx'],
     run: async (toolbox: GluegunToolbox) => {
         const {
             parameters

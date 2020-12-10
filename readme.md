@@ -12,6 +12,9 @@ $ yarn run link
 $ cp .env.example .env
 ```
 
+
+
+
 ## 配置env
 
 ```
@@ -42,22 +45,16 @@ trustee-tools list
 trustee-tools tx
 ```
 
-## 构造提现交易原文并提交上链
+## 构造提现交易原文不签名直接上链
 
 ```
-trustee-tools  create submit sign
-```
-
-## 构造提现交易原文不上链
-
-```
-trustee-tools  create
+trustee-tools  create submit
 ```
 
 ## 响应待签原文并提交上链
 
 ```
-trustee-tools  respond submit
+trustee-tools respond submit
 
 ```
 
