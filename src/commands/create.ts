@@ -2,7 +2,7 @@ import { GluegunToolbox } from 'gluegun'
 import ContstructTx from '../api/contructTx'
 // import TrezorConnector from '../multisign/trezor'
 // import Ledger from '../multisign/ledger'
-//const { Select } = require('enquirer');
+// const { Select } = require('enquirer');
 // const promtSelectDevice = async () => {
 //     console.log('\n')
 //     const prompt = new Select({
@@ -43,7 +43,7 @@ module.exports = {
         // }
 
         const constructTx = new ContstructTx(sign, submit)
-        //constructTx.init(device, type)
+        // constructTx.init(device, type)
         await constructTx.construct()
 
     },
