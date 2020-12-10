@@ -63,10 +63,10 @@ export default class ContstructTx {
         console.table(normalizedOuts);
 
         const choiceList = []
-        filteredList.map(item => {
+        filteredList.map((item) => {
             choiceList.push(
                 {
-                    name: `地址：${item.addr} 提现数量: ${Number(item.balance) / Math.pow(10, 8)} BTC  Applying : ${item.state}`,
+                    name: `id:${item.id} 地址：${item.addr} 提现数量: ${Number(item.balance) / Math.pow(10, 8)} BTC  Applying : ${item.state}`,
                     value: item
                 }
             )
@@ -75,9 +75,10 @@ export default class ContstructTx {
         const prompt = new MultiSelect({
             name: '构造提现',
             message: '选择交易构造提现列表',
+            hint: '(使用 <空格> 进行选择, <回车键> 进行确认提交)',
             choices: choiceList,
             result(names) {
-                return this.map(names);
+                return this.map(names)
             }
         });
 
