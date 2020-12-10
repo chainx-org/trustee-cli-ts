@@ -1,22 +1,19 @@
 import { GluegunToolbox } from 'gluegun'
 import ContstructTx from '../api/contructTx'
-import TrezorConnector from '../multisign/trezor'
-import Ledger from '../multisign/ledger'
-import { isNull } from '../utils';
-const { Select } = require('enquirer');
+// import TrezorConnector from '../multisign/trezor'
+// import Ledger from '../multisign/ledger'
+//const { Select } = require('enquirer');
+// const promtSelectDevice = async () => {
+//     console.log('\n')
+//     const prompt = new Select({
+//         name: 'select device',
+//         message: 'select device or privateKey',
+//         choices: ['privateKey ', 'ledger', 'trezor']
+//     });
+//     const device = await prompt.run();
 
-
-const promtSelectDevice = async () => {
-    console.log('\n')
-    const prompt = new Select({
-        name: 'select device',
-        message: 'select device or privateKey',
-        choices: ['privateKey ', 'ledger', 'trezor']
-    });
-    const device = await prompt.run();
-
-    return device;
-}
+//     return device;
+// }
 
 
 module.exports = {
@@ -30,33 +27,23 @@ module.exports = {
         let sign: boolean = parameters.first === 'sign';
         let submit: boolean = parameters.second === 'submit' || parameters.first === 'submit';
 
-        let raw = '';
-        if (parameters.first === 'submit') {
-            if (isNull(parameters.second)) {
-                console.error('请输入交易原文');
-                process.exit(0);
-            } else {
-                raw = parameters.second;
-            }
-        }
+        // const selectDevice = await promtSelectDevice()
 
-        const selectDevice = await promtSelectDevice()
+        // let device: any = null;
+        // let type: string = 'privateKey'
 
-        let device: any = null;
-        let type: string = 'privateKey'
+        // if (selectDevice === 'trezor') {
+        //     const trezor = new TrezorConnector();
+        //     await trezor.init()
+        //     device = trezor;
 
-        if (selectDevice === 'trezor') {
-            const trezor = new TrezorConnector();
-            await trezor.init()
-            device = trezor;
+        // } else if (selectDevice === 'ledger') {
+        //     const ledger = new Ledger()
+        //     device = ledger;
+        // }
 
-        } else if (selectDevice === 'ledger') {
-            const ledger = new Ledger()
-            device = ledger;
-        }
-
-        const constructTx = new ContstructTx(sign, submit, raw)
-        constructTx.init(device, type)
+        const constructTx = new ContstructTx(sign, submit)
+        //constructTx.init(device, type)
         await constructTx.construct()
 
     },

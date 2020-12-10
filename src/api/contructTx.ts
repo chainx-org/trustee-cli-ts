@@ -215,7 +215,7 @@ export default class ContstructTx {
             rawTx = txb.buildIncomplete().toHex();
         }
         console.log("生成代签原文:");
-        console.log(rawTx);
+        console.log(colors.yellow(rawTx));
 
         await this.submitIfRequired(withdrawals, rawTx);
     }
@@ -270,7 +270,7 @@ export default class ContstructTx {
 
         console.log("idx..." + JSON.stringify(ids));
 
-        withdrawals.forEach(async (item, index) => {
+        withdrawals.forEach(async (item) => {
             if (item.state === "Applying") {
                 const extrinsic = this.api.getApi().tx["xGatewayBitcoin"]["createWithdrawTx"](
                     ids,
@@ -287,13 +287,13 @@ export default class ContstructTx {
                         events.forEach(({ phase, event: { data, method, section } }) => {
                             // console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
                             if (method === "ExtrinsicFailed") {
-                                console.error(
-                                    `提交ChainX信托签名交易失败 \n ${phase}: ${section}.${method}:: ${data}`
+                                console.error(colors.red(
+                                    `提交ChainX信托签名交易失败 \n ${phase}: ${section}.${method}:: ${data}`)
                                 );
                                 process.exit(0);
                             } else if (method === "ExtrinsicSuccess") {
-                                console.log(
-                                    `提交信托签名交易成功 \n ${phase}: ${section}.${method}:: ${data}`
+                                console.log(colors.green(
+                                    `提交信托签名交易成功 \n ${phase}: ${section}.${method}:: ${data}`)
                                 );
                                 process.exit(0);
                             }
