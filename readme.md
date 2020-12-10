@@ -56,7 +56,7 @@ ChainX 账户私钥，用于签名并提交 ChainX 交易。
    
 ### 二、使用信托UI工具构造特殊交易进行签名
 
-
+![image](https://user-images.githubusercontent.com/7252280/101735161-6aa06c00-3afc-11eb-8d61-4053213c777e.png)
 ### 三、 复制签名后的交易原文提交上链
 
    ```
