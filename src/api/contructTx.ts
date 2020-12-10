@@ -238,7 +238,7 @@ export default class ContstructTx {
             "hex"
         );
 
-        console.log(`redeemScript... ${info.hotAddress.redeemScript.toString()} network........ ${JSON.stringify(network)}`);
+        console.log(`redeemScript: ${info.hotAddress.redeemScript.toString()} network........ ${JSON.stringify(network)}`);
 
         const keyPair = bitcoin.ECPair.fromWIF(
             process.env.bitcoin_private_key,
