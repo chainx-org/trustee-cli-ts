@@ -86,13 +86,19 @@ module.exports = {
             await parseRawTxAndLog(withdrawTx.tx);
 
             if (withdrawTx.trusteeList.length <= 0) {
-                console.log(colors.yellow("目前没有信托签名"));
+                if (withdrawTx.sigState === 'Unfinish') {
+                    console.log(colors.yellow("已创建,请继续完成签名 \n"));
+                    console.log(colors.red(`代签原文：\n ${withdrawTx.tx} \n`));
+                    console.log(colors.green(`提现id列表:\n ${withdrawTx.withdrawalIdList}`));
+                }
+                process.exit(0);
+
             } else {
                 await logSignedIntentions(withdrawTx.trusteeList);
                 if (withdrawTx.sigState === "Finish") {
                     console.log(colors.red("签名已完成"))
                 }
-                process.exit(0)
+                process.exit(0);
             }
         }
     },
