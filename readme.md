@@ -11,8 +11,7 @@ A CLI for trustee-tools.
 ```shell
 $ yarn
 $ yarn run build
-$ yarn run link
-$ cp .env.example .env'
+$ cp .env.example .env
 
 ```
 
