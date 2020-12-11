@@ -21,9 +21,14 @@ export default class SubmitTx {
         const currentAccount = await this.api.getAccountKeyring();
         console.log(colors.blue(`当前信托账户: ${currentAccount.address}`))
 
-        const extrinsic = this.api.getApi().tx["xGatewayBitcoin"]["signWithdrawTx"](
-            add0x(this.rawTx)
-        );
+        let extrinsic;
+        if (this.rawTx === 'null') {
+            extrinsic = this.api.getApi().tx["xGatewayBitcoin"]["signWithdrawTx"](null);
+        } else {
+            extrinsic = this.api.getApi().tx["xGatewayBitcoin"]["signWithdrawTx"](
+                add0x(this.rawTx)
+            );
+        }
 
         await extrinsic.signAndSend(currentAccount, ({ events = [], status }) => {
             console.log(`Current status is ${status.type}`);
