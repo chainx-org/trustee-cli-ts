@@ -9,8 +9,23 @@ const mainnetPath = "m/45'/0'/0'/0/0";
 const testnetPath = "m/45'/1'/0'/0/0";
 
 class Ledger {
-    async getPubKeyFromLedger(btc, network = "mainnet") {
-        const path = network === "mainnet" ? mainnetPath : testnetPath;
+
+    public transport: any;
+    public publicKey: string;
+    public network: string;
+    public appBtc: any;
+
+    constructor(network: string) {
+        this.network = network;
+    }
+
+    async init() {
+        this.transport = await TransportNodeHid.open("");
+        this.appBtc = new AppBtc(this.transport);
+    }
+
+    async getPubKeyFromLedger(btc: any) {
+        const path = this.network === "mainnet" ? mainnetPath : testnetPath;
 
         const result = await btc.getWalletPublicKey(path);
         const compressed = btc.compressPublicKey(
@@ -20,18 +35,14 @@ class Ledger {
         return compressed.toString("hex");
     }
 
-    async getPublicKey(network = "mainnet") {
-        const transport = await TransportNodeHid.open("");
-        const btc = new AppBtc(transport);
-
-        const result = await btc.getWalletPublicKey("44'/0'/0'/0/0");
-
-        return result.publicKey;
+    async getPublicKey() {
+        const key = await this.getPubKeyFromLedger(this.appBtc);
+        return key;
     }
 
-    public constructTxObj(raw, inputArr, redeemScript, network = "mainnet") {
+    public constructTxObj(raw, inputArr, redeemScript) {
         const net =
-            network === "mainnet" ? bitcore.Networks.mainnet : bitcore.Networks.testnet;
+            this.network === "mainnet" ? bitcore.Networks.mainnet : bitcore.Networks.testnet;
 
         const txObj = bitcore.Transaction();
 
@@ -62,16 +73,16 @@ class Ledger {
 
             txObj.to(address.toString(), output.satoshis);
         }
-        this.applyAlreadyExistedSig(txObj, raw, network);
+        this.applyAlreadyExistedSig(txObj, raw);
 
         return txObj;
     }
 
-    public applyAlreadyExistedSig(txObj, raw, network) {
+    public applyAlreadyExistedSig(txObj, raw) {
         const tx = bitcoinjs.Transaction.fromHex(raw);
         const txb = bitcoinjs.TransactionBuilder.fromTransaction(
             tx,
-            network === "mainnet"
+            this.network === "mainnet"
                 ? bitcoinjs.networks.bitcoin
                 : bitcoinjs.networks.testnet
         );
@@ -94,7 +105,7 @@ class Ledger {
                     sigtype: bitcore.crypto.Signature.SIGHASH_ALL,
                     publicKey: bitcore.PublicKey(pubkey, {
                         network:
-                            network === "mainnet"
+                            this.network === "mainnet"
                                 ? bitcore.Networks.mainnet
                                 : bitcore.Networks.testnet,
                         compressed: true
@@ -107,12 +118,11 @@ class Ledger {
     }
 
     public async sign(raw, inputsObj, redeemScript, network = "mainnet") {
-        const transport = await TransportNodeHid.open("");
-        const btc = new AppBtc(transport);
-        const pubkey = await this.getPubKeyFromLedger(btc, network);
+
+        const pubkey = await this.getPubKeyFromLedger(this.appBtc);
 
         if (!redeemScript) {
-            redeemScript = getRedeemScriptFromRaw(raw, network);
+            redeemScript = getRedeemScriptFromRaw(raw, this.network);
         }
 
         if (!redeemScript) {
@@ -120,15 +130,15 @@ class Ledger {
         }
 
         const toSignInputs = inputsObj.map(({ raw, index }) => {
-            const tx = btc.splitTransaction(raw, true);
+            const tx = this.appBtc.splitTransaction(raw, true);
             return [tx, index, redeemScript];
         });
 
-        const outputScript = btc
-            .serializeTransactionOutputs(btc.splitTransaction(raw))
+        const outputScript = this.appBtc
+            .serializeTransactionOutputs(this.appBtc.splitTransaction(raw))
             .toString("hex");
 
-        const path = network === "mainnet" ? mainnetPath : testnetPath;
+        const path = this.network === "mainnet" ? mainnetPath : testnetPath;
         const paths = toSignInputs.map(() => path);
         // @ts-ignore
         const result = await btc.signP2SHTransaction(
@@ -153,7 +163,7 @@ class Ledger {
             };
         });
 
-        const finalTx = this.constructTxObj(raw, inputsObj, redeemScript, network);
+        const finalTx = this.constructTxObj(raw, inputsObj, redeemScript);
         for (const signature of signatureObjs) {
             finalTx.applySignature(signature);
         }

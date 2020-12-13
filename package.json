@@ -32,8 +32,8 @@
   "license": "MIT",
   "dependencies": {
     "@chainx-v2/api": "0.0.49",
-    "@ledgerhq/hw-app-btc": "4.64.0",
-    "@ledgerhq/hw-transport-node-hid": "^4.64.0",
+    "@ledgerhq/hw-app-btc": "^5.34.1",
+    "@ledgerhq/hw-transport-node-hid": "^5.34.0",
     "@polkadot/api": "^2.9.1",
     "@polkadot/keyring": "^4.2.1",
     "@polkadot/util": "^4.2.1",

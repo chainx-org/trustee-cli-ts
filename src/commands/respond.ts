@@ -30,9 +30,14 @@ module.exports = {
                 device = trezor;
                 console.log(trezor.isConnected())
             } else if (selectDevice === 'ledger') {
-                const ledger = new Ledger()
+                const ledger = new Ledger('mainnet')
+                await ledger.init()
                 device = ledger;
                 type = selectDevice;
+                console.log('正在使用ledger....')
+                const publicKey = await ledger.getPublicKey()
+                console.log(`ledger publickKey: ${publicKey}`)
+
             }
 
             const respond = new Respond(true, submit)
