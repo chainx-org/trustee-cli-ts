@@ -1,5 +1,5 @@
 require("babel-polyfill");
-const TransportNodeHid = require("@ledgerhq/hw-transport-node-hid").default;
+import TransportNodeHid from "@ledgerhq/hw-transport-node-hid";
 const AppBtc = require("@ledgerhq/hw-app-btc").default;
 const bitcoinjs = require("bitcoinjs-lib");
 const { getRedeemScriptFromRaw } = require("./bitcoin-utils");
@@ -20,7 +20,8 @@ class Ledger {
     }
 
     async init() {
-        this.transport = await TransportNodeHid.open("");
+        this.transport = await TransportNodeHid.create();
+        this.transport.setDebugMode(true);
         this.appBtc = new AppBtc(this.transport);
     }
 
