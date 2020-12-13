@@ -120,7 +120,7 @@ export default class CreateToHot {
         this.logInputs(targetInputs);
         this.logOutputs(txb, network);
 
-        const rawTx = txb.build().toHex();
+        const rawTx = txb.buildIncomplete().toHex();
         console.log("生成代签原文:");
         console.log(rawTx);
 
