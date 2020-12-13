@@ -8,6 +8,7 @@ import Api from "./chainx";
 import { getUnspents, calcTargetUnspents, getInputsAndOutputsFromTx } from "./bitcoin";
 const bitcoin = require("bitcoinjs-lib");
 const { remove0x } = require("../utils");
+const colors = require('colors')
 
 
 export default class CreateToHot {
@@ -104,12 +105,14 @@ export default class CreateToHot {
             }
             const rawTx = txb.buildIncomplete().toHex();
 
-            const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx,
-                properties.bitcoinType);
-            const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, info.hotAddress.redeemScript, properties.bitcoinType);
-            console.log(`签名成功: \n ${signData}`)
-            process.exit(0)
-
+            try {
+                const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx,
+                    properties.bitcoinType);
+                const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, info.hotAddress.redeemScript.replace(/^0x/, ''), properties.bitcoinType);
+                console.log(`签名成功: \n ${signData}`)
+            } catch (err) {
+                console.log(colors.red('签名失败') + JSON.stringify(err))
+            }
         }
 
         this.logInputs(targetInputs);
