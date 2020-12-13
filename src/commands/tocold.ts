@@ -35,12 +35,9 @@ module.exports = {
             const ledger = new Ledger()
             device = ledger;
             type = selectDevice;
-            await device.getPublicKey()
             const publicKey = await device.getPublicKey();
             console.log(publicKey)
         }
-
-        await device.getPublicKey()
         const createTocold = new CreateTocold(amount)
         await createTocold.init(device, type)
         await createTocold.contructToCold();
