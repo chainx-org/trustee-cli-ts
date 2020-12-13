@@ -102,14 +102,18 @@ export default class CreateToHot {
             if (!this.device.isConnected()) {
                 console.log('硬件钱包未连接，请拔掉设备重新初始化')
             }
-            const rawTx = txb.buildIncomplete().toHex();
+            try {
+                const rawTx = txb.buildIncomplete().toHex();
 
-            const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx,
-                properties.bitcoinType);
+                const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx,
+                    properties.bitcoinType);
 
-            const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(info.hotAddress.redeemScript.toString()), properties.bitcoinType);
-            console.log(`签名成功: \n ${signData}`)
-            process.exit(0)
+                const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(info.hotAddress.redeemScript.toString()), properties.bitcoinType);
+                console.log(`签名成功: \n ${signData}`)
+            } catch (err) {
+                console.log(`签名失败:` + JSON.stringify(err))
+
+            }
 
         }
 
