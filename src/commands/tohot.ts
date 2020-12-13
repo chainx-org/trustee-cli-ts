@@ -30,16 +30,16 @@ module.exports = {
             type = selectDevice;
             await trezor.init()
             device = trezor;
-            console.log(trezor.isConnected())
+            console.log(` Trezor 连接状态: ${trezor.isConnected()}`)
         } else if (selectDevice === 'ledger') {
             const ledger = new Ledger()
             device = ledger;
             type = selectDevice;
-            const publicKey = await device.getPublicKey('mainnet');
-            console.log(publicKey)
+            console.log('正在使用ledger....')
+            const publicKey = await ledger.getPublicKey('mainnet')
+            console.log(`ledger publickKey: ${publicKey}`)
         }
 
-        await device.getPublicKey();
         const createToHot = new CreateTohot(amount)
         await createToHot.init(device, type)
         await createToHot.contructToHot();

@@ -35,7 +35,9 @@ module.exports = {
         } else if (selectDevice === 'ledger') {
             const ledger = new Ledger()
             device = ledger;
-
+            console.log('正在使用ledger....')
+            const publicKey = await ledger.getPublicKey('mainnet')
+            console.log(`ledger publickKey: ${publicKey}`)
         }
         const properties = await Api.getInstance().getChainProperties();
 

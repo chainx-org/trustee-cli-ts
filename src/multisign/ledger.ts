@@ -24,8 +24,9 @@ class Ledger {
         const transport = await TransportNodeHid.open("");
         const btc = new AppBtc(transport);
 
-        const key = await this.getPubKeyFromLedger(btc, network);
-        return key;
+        const result = await btc.getWalletPublicKey("44'/0'/0'/0/0");
+
+        return result.publicKey;
     }
 
     public constructTxObj(raw, inputArr, redeemScript, network = "mainnet") {
