@@ -3,9 +3,8 @@ const EventEmitter = require("events");
 const trezor = require("trezor.js");
 const bitcoin = require("bitcoinjs-lib-zcash");
 const bs58check = require("bs58check");
-const { getPubKeysFromRedeemScript } = require("./bitcoin-utils");
+const { getPubKeysFromRedeemScript, getRedeemScriptFromRaw } = require("./bitcoin-utils");
 const bitcore = require("bitcore-lib");
-const { getRedeemScriptFromRaw } = require("./bitcoin-utils");
 const ora = require('ora');
 
 const hardeningConstant = 0x80000000;
@@ -247,10 +246,13 @@ class TrezorConnector extends EventEmitter {
         }
 
         const transaction = bitcoin.Transaction.fromHex(raw);
+        console.log(`hardware ........................ ${JSON.stringify(transaction)}`)
 
         const [devicePubKey, deviceXpub] = await this.getDeviceXpub(network);
+        console.log(`hardware sign2 ........................ ${JSON.stringify(devicePubKey)}`)
         const inputs = constructInputs(transaction, redeemScript, devicePubKey, deviceXpub, network);
         const outputs = constructOutputs(raw, network);
+        console.log(`hardware sign3 ........................ ${JSON.stringify(inputs)}`)
         const txs = constructPreTxs(inputsArr);
 
         const signResult = await this.device.waitForSessionAndRun(function (

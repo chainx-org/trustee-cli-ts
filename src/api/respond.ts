@@ -1,5 +1,7 @@
 import Api from './chainx'
 import { remove0x, add0x, isNull } from '../utils'
+import { getInputsAndOutputsFromTx } from './bitcoin'
+import { TrusteeSessionInfo } from './types';
 require("dotenv").config();
 require("console.table");
 const bitcoin = require("bitcoinjs-lib");
@@ -9,14 +11,20 @@ export default class Respond {
     public api: Api;
     public needSubmit: boolean;
     public redeemScript: Buffer;
+    public signHardware: boolean;
+    public device: any;
+    public deviceType: string;
+    public trusteeSessonInfo: TrusteeSessionInfo;
 
-    constructor(needSubmit: boolean) {
+    constructor(signHardware: boolean, needSubmit: boolean) {
         this.needSubmit = needSubmit;
+        this.signHardware = signHardware;
         this.api = Api.getInstance();
     }
 
-    async init() {
+    async init(device: any, deviceType: string) {
         const info = await this.api.getTrusteeSessionInfo();
+        this.trusteeSessonInfo = info;
         this.redeemScript = Buffer.from(
             remove0x(info.hotAddress.redeemScript.toString()),
             'hex'
@@ -25,6 +33,8 @@ export default class Respond {
             console.error("没有设置bitcoin_private_key");
             process.exit(1);
         }
+        this.device = device;
+        this.deviceType = deviceType;
     }
 
     async respond() {
@@ -45,7 +55,15 @@ export default class Respond {
 
             await this.parseRawTxAndLog(withdrawalTx.tx);
 
-            await this.sign(withdrawalTx.tx);
+            if (this.deviceType === 'ledger' || this.deviceType === 'trezor') {
+                const resultInputAndOutput = await getInputsAndOutputsFromTx(withdrawalTx.tx);
+                const signData = await this.device.sign(remove0x(withdrawalTx.tx), resultInputAndOutput.txInputs, remove0x(this.trusteeSessonInfo.hotAddress.redeemScript.toString()), 'testnet')
+                console.log(colors.green("签名成功!"))
+                console.log(colors.red(signData))
+                await this.submitIfRequired(JSON.stringify(signData));
+            } else {
+                await this.sign(withdrawalTx.tx);
+            }
 
             if (!this.needSubmit) {
                 process.exit(0);

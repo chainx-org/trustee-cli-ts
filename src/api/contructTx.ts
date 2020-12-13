@@ -1,7 +1,8 @@
 import Api from './chainx'
-import { getUnspents, pickUtxos } from './bitcoin'
+import { getUnspents, pickUtxos, getInputsAndOutputsFromTx } from './bitcoin'
 import { remove0x, add0x } from '../utils'
 import { WithDrawLimit, WithdrawaItem } from './types';
+
 const { MultiSelect } = require('enquirer');
 const colors = require('colors')
 require("dotenv").config()
@@ -209,36 +210,49 @@ export default class ContstructTx {
     }
 
     async signIfRequired(txb, network) {
+        console.log(`sign........................1`)
+
+        const rawTx = txb.buildIncomplete().toHex();
         if (!this.needSign) {
             return false;
         }
-        console.log(JSON.stringify(txb))
-
-        if (!process.env.bitcoin_private_key) {
-            console.error("没有设置bitcoin_private_key");
-            process.exit(1);
-        }
-
         const info = await this.api.getTrusteeSessionInfo();
+        console.log(`sign........................2 ${JSON.stringify(rawTx)}`)
 
         const redeemScript = Buffer.from(
             remove0x(info.hotAddress.redeemScript.toString()),
             "hex"
         );
+        console.log(`sign........................ ${info.hotAddress.redeemScript.toString()}`)
 
-        console.log(`redeemScript: ${info.hotAddress.redeemScript.toString()} network........ ${JSON.stringify(network)}`);
+        if (this.deviceType === 'trezor' || this.deviceType === 'ledger') {
+            if (!this.device.isConnected()) {
+                console.log('硬件钱包未连接，请拔掉设备重新初始化')
+            }
+            const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx);
 
-        const keyPair = bitcoin.ECPair.fromWIF(
-            process.env.bitcoin_private_key,
-            network
-        );
-        for (let i = 0; i < txb.__inputs.length; i++) {
-            txb.sign(i, keyPair, redeemScript);
+            console.log(colors.red(JSON.stringify(inputAndOutPutResult.txInputs)))
+
+            const signData = await this.device.sign(JSON.stringify(rawTx), inputAndOutPutResult.txInputs, remove0x(info.hotAddress.redeemScript.toString()), 'testnet');
+            console.log(`签名成功: \n ${signData}`)
+            process.exit(0)
+
+        } else {
+            if (!process.env.bitcoin_private_key) {
+                console.error("没有设置bitcoin_private_key");
+                process.exit(1);
+            }
+            const keyPair = bitcoin.ECPair.fromWIF(
+                process.env.bitcoin_private_key,
+                network
+            );
+            for (let i = 0; i < txb.__inputs.length; i++) {
+                txb.sign(i, keyPair, redeemScript);
+            }
+
         }
-
         return true;
     }
-
 
     async submitIfRequired(withdrawals, rawTx) {
         if (!this.needSubmit) {

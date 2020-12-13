@@ -1,3 +1,4 @@
+const { Select } = require('enquirer');
 export function remove0x(str: string): string {
     if (str.startsWith("0x")) {
         return str.slice(2);
@@ -22,4 +23,17 @@ export function add0x(str: string): string {
     } else {
         return "0x" + str;
     }
+}
+
+
+export const promtSelectDevice = async () => {
+    console.log('\n')
+    const prompt = new Select({
+        name: 'select device',
+        message: 'select device or privateKey',
+        choices: ['privateKey ', 'ledger', 'trezor']
+    });
+    const device = await prompt.run();
+
+    return device;
 }
