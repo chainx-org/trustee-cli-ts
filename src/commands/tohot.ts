@@ -35,8 +35,11 @@ module.exports = {
             const ledger = new Ledger()
             device = ledger;
             type = selectDevice;
+            const publicKey = await device.getPublicKey();
+            console.log(publicKey)
         }
 
+        await device.getPublicKey();
         const createToHot = new CreateTohot(amount)
         await createToHot.init(device, type)
         await createToHot.contructToHot();
