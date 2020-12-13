@@ -231,9 +231,7 @@ export default class ContstructTx {
             }
             const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx);
 
-            console.log(colors.red(JSON.stringify(inputAndOutPutResult.txInputs)))
-
-            const signData = await this.device.sign(JSON.stringify(rawTx), inputAndOutPutResult.txInputs, remove0x(info.hotAddress.redeemScript.toString()), 'testnet');
+            const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(info.hotAddress.redeemScript.toString()), 'testnet');
             console.log(`签名成功: \n ${signData}`)
             process.exit(0)
 
