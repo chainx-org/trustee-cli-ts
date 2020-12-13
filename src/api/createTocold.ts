@@ -106,8 +106,7 @@ export default class CreateToHot {
 
             const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx,
                 properties.bitcoinType);
-
-            const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(info.hotAddress.redeemScript.toString()), 'testnet');
+            const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, info.hotAddress.redeemScript, properties.bitcoinType);
             console.log(`签名成功: \n ${signData}`)
             process.exit(0)
 
