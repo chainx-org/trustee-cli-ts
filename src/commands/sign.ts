@@ -24,18 +24,18 @@ module.exports = {
         const selectDevice = await promtSelectDevice()
 
         let device: any = null;
-        let type: string = selectDevice
+
 
         if (selectDevice === 'trezor') {
             const trezor = new TrezorConnector();
-            type = selectDevice;
+
             await trezor.init()
             device = trezor;
             console.log(trezor.isConnected())
         } else if (selectDevice === 'ledger') {
             const ledger = new Ledger()
             device = ledger;
-            type = selectDevice;
+
         }
         const properties = await Api.getInstance().getChainProperties();
 
