@@ -123,6 +123,7 @@ export default class CreateToHot {
         const rawTx = txb.buildIncomplete().toHex();
         console.log("生成代签原文:");
         console.log(rawTx);
+        process.exit(0);
 
     }
 
