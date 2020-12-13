@@ -59,10 +59,10 @@ export default class CreateToHot {
             required,
             total
         );
-        //@ts-ignore
+        // @ts-ignore
         const inputSum = targetInputs.reduce((sum, input) => sum + input.amount, 0);
 
-        //@ts-ignore
+        // @ts-ignore
         let change = inputSum - this.amount - minerFee;
         if (change < Number(process.env.min_change)) {
             change = 0;
@@ -76,7 +76,7 @@ export default class CreateToHot {
         const txb = new bitcoin.TransactionBuilder(network);
         txb.setVersion(1);
 
-        //@ts-ignore
+        // @ts-ignore
         for (const unspent of targetInputs) {
             txb.addInput(unspent.txid, unspent.vout);
         }
