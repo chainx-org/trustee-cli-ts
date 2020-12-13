@@ -1,23 +1,26 @@
 /**
- * 此脚本用于构造热转冷交易
+ * 此脚本用于构造冷转热交易
  */
 
 require("dotenv").config();
 require("console.table");
 import Api from "./chainx";
-import { getUnspents, calcTargetUnspents } from "./bitcoin";
+import { getUnspents, calcTargetUnspents, getInputsAndOutputsFromTx } from "./bitcoin";
 const bitcoin = require("bitcoinjs-lib");
 const { remove0x } = require("../utils");
 
-export default class CreateToCold {
-    public amount: number;
-    constructor(rawAmount: string) {
-        if (!rawAmount) {
-            throw new Error("没有指定转账金额");
-            process.exit(1);
-        }
 
+export default class CreateToHot {
+    public amount: number;
+    public device: any;
+    public deviceType: string;
+    constructor(rawAmount: string) {
         this.amount = Math.pow(10, 8) * parseFloat(rawAmount);
+    }
+
+    async init(device: any, deviceType: string) {
+        this.device = device;
+        this.deviceType = deviceType;
     }
 
     async contructToCold() {
@@ -31,20 +34,23 @@ export default class CreateToCold {
             process.exit(1);
         }
         const info = await Api.getInstance().getTrusteeSessionInfo();
-        const properties = await Api.getInstance().getChainProperties();
-
         const hotAddr = info.hotAddress.addr;
         const coldAddr = info.coldAddress.addr;
         const required = info.threshold;
-        const total = info.trusteeList.length;
 
         const redeemScript = Buffer.from(
-            remove0x(info.coldAddress.redeemScript.toString()),
+            remove0x(info.hotAddress.redeemScript.toString()),
             "hex"
         );
 
+        const properties = await Api.getInstance().getChainProperties();
+
+        const total = info.trusteeList.length;
+        console.log(`bitcoin type ${properties.bitcoinType}`)
+
         const unspents = await getUnspents(hotAddr, properties.bitcoinType);
-        unspents.sort((a, b) => a.amount > b.amount);
+        unspents.sort((a, b) => Number(b.amount) - Number(a.amount));
+
 
         const [targetInputs, minerFee] = await calcTargetUnspents(
             unspents,
@@ -53,17 +59,16 @@ export default class CreateToCold {
             required,
             total
         );
-        // @ts-ignore
+        //@ts-ignore
         const inputSum = targetInputs.reduce((sum, input) => sum + input.amount, 0);
 
-        // @ts-ignore
+        //@ts-ignore
         let change = inputSum - this.amount - minerFee;
         if (change < Number(process.env.min_change)) {
             change = 0;
         }
 
         this.logMinerFee(minerFee);
-
         const network =
             properties.bitcoinType === "mainnet"
                 ? bitcoin.networks.bitcoin
@@ -71,25 +76,41 @@ export default class CreateToCold {
         const txb = new bitcoin.TransactionBuilder(network);
         txb.setVersion(1);
 
-        // @ts-ignore
+        //@ts-ignore
         for (const unspent of targetInputs) {
             txb.addInput(unspent.txid, unspent.vout);
         }
 
-        // @ts-ignore
-        txb.addOutput(coldAddr, this.amount);
+        txb.addOutput(hotAddr, this.amount);
         if (change > 0) {
             txb.addOutput(coldAddr, change);
         }
 
-        const keyPair = bitcoin.ECPair.fromWIF(
-            process.env.bitcoin_private_key,
-            network
-        );
+        if (this.deviceType === 'privateKey') {
+            const keyPair = bitcoin.ECPair.fromWIF(
+                process.env.bitcoin_private_key,
+                network
+            );
 
-        let redeem = Buffer.from(remove0x(redeemScript), "hex");
-        for (let i = 0; i < txb.__inputs.length; i++) {
-            txb.sign(i, keyPair, redeem);
+            let redeem = Buffer.from(remove0x(redeemScript), "hex");
+            for (let i = 0; i < txb.__inputs.length; i++) {
+                txb.sign(i, keyPair, redeem);
+            }
+
+        } else {
+
+            if (!this.device.isConnected()) {
+                console.log('硬件钱包未连接，请拔掉设备重新初始化')
+            }
+            const rawTx = txb.buildIncomplete().toHex();
+
+            const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx,
+                properties.bitcoinType);
+
+            const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(info.hotAddress.redeemScript.toString()), 'testnet');
+            console.log(`签名成功: \n ${signData}`)
+            process.exit(0)
+
         }
 
         this.logInputs(targetInputs);
@@ -98,6 +119,7 @@ export default class CreateToCold {
         const rawTx = txb.build().toHex();
         console.log("生成代签原文:");
         console.log(rawTx);
+
     }
 
     logMinerFee(minerFee) {
@@ -127,5 +149,3 @@ export default class CreateToCold {
     }
 
 }
-
-
