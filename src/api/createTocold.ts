@@ -122,6 +122,7 @@ export default class CreateToHot {
         console.log("生成代签原文:");
         console.log(rawTx);
 
+        process.exit(0)
     }
 
     logMinerFee(minerFee) {
