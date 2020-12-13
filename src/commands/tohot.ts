@@ -35,7 +35,7 @@ module.exports = {
             const ledger = new Ledger()
             device = ledger;
             type = selectDevice;
-            const publicKey = await device.getPublicKey();
+            const publicKey = await device.getPublicKey('mainnet');
             console.log(publicKey)
         }
 

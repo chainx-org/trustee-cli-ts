@@ -1,11 +1,12 @@
-require("babel-polyfill");
-const TransportNodeHid = require("@ledgerhq/hw-transport-node-hid").default;
-const AppBtc = require("@ledgerhq/hw-app-btc").default;
+
+import "babel-polyfill";
+import TransportNodeHid from "@ledgerhq/hw-transport-node-hid";
+import AppBtc from "@ledgerhq/hw-app-btc";
 const bitcoinjs = require("bitcoinjs-lib");
 const { getRedeemScriptFromRaw } = require("./bitcoin-utils");
 
 const bitcore = require("bitcore-lib");
-const mainnetPath = "m/45'/0'/0'/0/0";
+const mainnetPath = "m/44'/0'/0'/0/0";
 const testnetPath = "m/45'/1'/0'/0/0";
 
 class Ledger {
@@ -129,8 +130,10 @@ class Ledger {
 
         const path = network === "mainnet" ? mainnetPath : testnetPath;
         const paths = toSignInputs.map(() => path);
+        //@ts-ignore
         const result = await btc.signP2SHTransaction(
             toSignInputs,
+            //@ts-ignore
             paths,
             outputScript
         );
