@@ -99,9 +99,9 @@ export default class CreateToHot {
 
         } else {
 
-            if (!this.device.isConnected()) {
-                console.log('硬件钱包未连接，请拔掉设备重新初始化')
-            }
+            // if (!this.device.isConnected()) {
+            //     console.log('硬件钱包未连接，请拔掉设备重新初始化')
+            // }
             try {
                 const rawTx = txb.buildIncomplete().toHex();
 
