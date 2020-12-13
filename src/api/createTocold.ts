@@ -81,7 +81,7 @@ export default class CreateToHot {
             txb.addInput(unspent.txid, unspent.vout);
         }
 
-        txb.addOutput(hotAddr, this.amount);
+        txb.addOutput(coldAddr, this.amount);
         if (change > 0) {
             txb.addOutput(coldAddr, change);
         }
