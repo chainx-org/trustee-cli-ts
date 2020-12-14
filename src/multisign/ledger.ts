@@ -27,10 +27,8 @@ class Ledger {
 
     async getPubKeyFromLedger(btc: any) {
         const path = this.network === "mainnet" ? mainnetPath : testnetPath;
-
         const result = await btc.getWalletPublicKey(path);
-
-        return result.publicKey;
+        return result.publicKey.toString('hex');
     }
 
     async getPublicKey() {
@@ -40,8 +38,7 @@ class Ledger {
 
     public constructTxObj(raw, inputArr, redeemScript) {
 
-        const net =
-            this.network === "mainnet" ? bitcore.Networks.mainnet : bitcore.Networks.testnet;
+        const net = bitcore.Networks.mainnet;
 
         const txObj = bitcore.Transaction();
 
@@ -84,12 +81,7 @@ class Ledger {
 
     public applyAlreadyExistedSig(txObj, raw) {
         const tx = bitcoinjs.Transaction.fromHex(raw);
-        const txb = bitcoinjs.TransactionBuilder.fromTransaction(
-            tx,
-            this.network === "mainnet"
-                ? bitcoinjs.networks.bitcoin
-                : bitcoinjs.networks.testnet
-        );
+        const txb = bitcoinjs.TransactionBuilder.fromTransaction(tx, bitcore.Networks.mainnet);
         txb.__inputs.forEach((input, index) => {
             if (!input.pubkeys) {
                 return;
@@ -143,16 +135,15 @@ class Ledger {
             associatedKeysets: paths,
             outputScriptHex: outputScript
         });
+
+
         const signatureObjs = result.map(function (sig, index) {
             return {
                 inputIndex: index,
                 signature: bitcore.crypto.Signature.fromString(sig),
                 sigtype: bitcore.crypto.Signature.SIGHASH_ALL,
                 publicKey: bitcore.PublicKey(pubkey, {
-                    network:
-                        this.network === "mainnet"
-                            ? bitcore.Networks.mainnet
-                            : bitcore.Networks.testnet,
+                    network: bitcore.Networks.mainnet,
                     compressed: true
                 })
             };
@@ -161,7 +152,7 @@ class Ledger {
         for (const signature of signatureObjs) {
             finalTx.applySignature(signature);
         }
-
+        console.log(`this.network: ${this.network}  network ${network} \n`)
         return finalTx.toString('hex');
     }
 }
