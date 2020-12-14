@@ -1,6 +1,7 @@
 require("babel-polyfill");
 import TransportNodeHid from "@ledgerhq/hw-transport-node-hid";
 const AppBtc = require("@ledgerhq/hw-app-btc").default;
+import { compressPublicKey } from '@ledgerhq/hw-app-btc/lib/compressPublicKey';
 const bitcoinjs = require("bitcoinjs-lib");
 const { getRedeemScriptFromRaw } = require("./bitcoin-utils");
 
@@ -28,7 +29,10 @@ class Ledger {
     async getPubKeyFromLedger(btc: any) {
         const path = this.network === "mainnet" ? mainnetPath : testnetPath;
         const result = await btc.getWalletPublicKey(path);
-        return result.publicKey.toString('hex');
+        const compressed = compressPublicKey(
+            Buffer.from(result.publicKey, "hex")
+        );
+        return compressed.toString("hex");
     }
 
     async getPublicKey() {
