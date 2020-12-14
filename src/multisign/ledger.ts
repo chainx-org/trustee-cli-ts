@@ -6,7 +6,7 @@ const bitcoinjs = require("bitcoinjs-lib");
 const { getRedeemScriptFromRaw } = require("./bitcoin-utils");
 
 const bitcore = require("bitcore-lib");
-const mainnetPath = "m/44'/0'/0'/0/0";
+const mainnetPath = "m/45'/0'/0'/0/0";
 const testnetPath = "m/45'/1'/0'/0/0";
 
 class Ledger {
