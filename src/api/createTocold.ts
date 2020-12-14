@@ -83,7 +83,7 @@ export default class CreateToHot {
 
         txb.addOutput(coldAddr, this.amount);
         if (change > 0) {
-            txb.addOutput(coldAddr, change);
+            txb.addOutput(hotAddr, change);
         }
 
         if (this.deviceType === 'privateKey') {
