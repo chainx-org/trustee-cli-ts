@@ -35,7 +35,9 @@ module.exports = {
         )
         console.log(tableAddr.toString())
 
-        console.log('redeemScript: ' + colors.red.underline(session.coldAddress.redeemScript));
+        console.log('cold redeemScript: ' + colors.red.underline(session.coldAddress.redeemScript));
+
+        console.log('hot redeemScript: ' + colors.green.underline(session.hotAddress.redeemScript));
 
         process.exit(0)
     },
