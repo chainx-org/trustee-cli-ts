@@ -214,10 +214,7 @@ class TrezorConnector extends EventEmitter {
         return !!this.device;
     }
 
-    /**
-     * @param {string} type
-    * @param {Function<Error, string>} callback
-    */
+
     pinCallback(type, callback) {
         console.log('Please enter PIN. The positions:');
         console.log('7 8 9');
@@ -231,7 +228,7 @@ class TrezorConnector extends EventEmitter {
 
         process.stdin.resume();
         process.stdin.on('data', function (buffer) {
-            var text = buffer.toString().replace(/\n$/, "");
+            let text = buffer.toString().replace(/\n$/, "");
             process.stdin.pause();
             callback(null, text);
         });
