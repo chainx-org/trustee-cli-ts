@@ -27,7 +27,7 @@ class Ledger {
     }
 
     async getPubKeyFromLedger(btc: any) {
-        const path = this.network === "mainnet" ? mainnetPath : testnetPath;
+        const path = mainnetPath;
         const result = await btc.getWalletPublicKey(path);
         const compressed = compressPublicKey(
             Buffer.from(result.publicKey, "hex")
