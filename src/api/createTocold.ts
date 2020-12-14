@@ -37,10 +37,6 @@ export default class CreateToHot {
         const coldAddr = info.coldAddress.addr;
         const required = info.threshold;
 
-        // const redeemScript = Buffer.from(
-        //     remove0x(info.hotAddress.redeemScript.toString()),
-        //     "hex"
-        // );
         console.log(colors.yellow(`redeem script ${info.coldAddress.redeemScript.toString()}`))
 
         const properties = await Api.getInstance().getChainProperties();
@@ -86,36 +82,11 @@ export default class CreateToHot {
             txb.addOutput(hotAddr, change);
         }
 
-        // if (this.deviceType === 'privateKey') {
-        //     const keyPair = bitcoin.ECPair.fromWIF(
-        //         process.env.bitcoin_private_key,
-        //         network
-        //     );
-
-        //     let redeem = Buffer.from(remove0x(redeemScript), "hex");
-        //     for (let i = 0; i < txb.__inputs.length; i++) {
-        //         txb.sign(i, keyPair, redeem);
-        //     }
-
-        // } else {
-
-        //     const rawTx = txb.buildIncomplete().toHex();
-
-        //     try {
-        //         const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx,
-        //             properties.bitcoinType);
-        //         const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, info.hotAddress.redeemScript.replace(/^0x/, ''), properties.bitcoinType);
-        //         console.log(colors.green(`签名成功: \n ${signData}`))
-        //     } catch (err) {
-        //         console.log(colors.red('签名失败') + JSON.stringify(err))
-        //     }
-        // }
-
         this.logInputs(targetInputs);
 
         const rawTx = txb.buildIncomplete().toHex();
         console.log("未签原始交易原文:");
-        console.log(rawTx);
+        console.log(colors.green(rawTx));
 
         process.exit(0)
     }

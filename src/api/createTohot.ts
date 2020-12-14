@@ -87,8 +87,8 @@ export default class CreateToHot {
         this.logInputs(targetInputs);
 
         const rawTx = txb.buildIncomplete().toHex();
-        console.log("未签原始交易:");
-        console.log(rawTx);
+        console.log("未签原始交易:\n");
+        console.log(colors.green(rawTx));
         process.exit(0);
 
     }
