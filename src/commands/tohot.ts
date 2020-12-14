@@ -31,11 +31,6 @@ module.exports = {
             await trezor.init()
             device = trezor;
             console.log(` Trezor 连接状态: ${trezor.isConnected()}`)
-            device.on("pin", device.pinCallback);
-
-            device.on('disconnect', function () {
-                console.log('Disconnected an opened device');
-            });
         } else if (selectDevice === 'ledger') {
             const ledger = new Ledger('mainnet')
             await ledger.init()

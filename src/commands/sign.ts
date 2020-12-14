@@ -24,14 +24,11 @@ module.exports = {
         const selectDevice = await promtSelectDevice()
 
         let device: any = null;
-
-
         if (selectDevice === 'trezor') {
             const trezor = new TrezorConnector();
-
             await trezor.init()
             device = trezor;
-            console.log(trezor.isConnected())
+            console.log("trezro 连接状态:" + trezor.isConnected())
         } else if (selectDevice === 'ledger') {
             const ledger = new Ledger('mainnet')
             await ledger.init();
