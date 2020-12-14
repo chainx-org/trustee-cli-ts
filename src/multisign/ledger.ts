@@ -30,7 +30,7 @@ class Ledger {
 
         const result = await btc.getWalletPublicKey(path);
 
-        return result.publicKey.toString("hex");
+        return result.publicKey;
     }
 
     async getPublicKey() {
@@ -150,7 +150,7 @@ class Ledger {
                 sigtype: bitcore.crypto.Signature.SIGHASH_ALL,
                 publicKey: bitcore.PublicKey(pubkey, {
                     network:
-                        network === "mainnet"
+                        this.network === "mainnet"
                             ? bitcore.Networks.mainnet
                             : bitcore.Networks.testnet,
                     compressed: true
