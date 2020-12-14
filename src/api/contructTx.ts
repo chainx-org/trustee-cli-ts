@@ -211,6 +211,8 @@ export default class ContstructTx {
 
     async signIfRequired(txb, network) {
 
+        const properties = await this.api.getChainProperties();
+
         const rawTx = txb.buildIncomplete().toHex();
         if (!this.needSign) {
             return false;
@@ -225,7 +227,7 @@ export default class ContstructTx {
 
             const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx);
 
-            const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(info.hotAddress.redeemScript.toString()), 'mainnet');
+            const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, info.coldAddress.redeemScript.replace(/^0x/, ''), properties.bitcoinType);
             console.log(`签名成功: \n ${signData}`)
             process.exit(0)
 

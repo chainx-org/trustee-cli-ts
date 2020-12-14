@@ -38,7 +38,9 @@ export default class Respond {
     }
 
     async respond() {
+
         let withdrawalTx = await this.api.getTxByReadStorage();
+        const properties = await this.api.getChainProperties();
 
         if (!withdrawalTx || isNull(withdrawalTx.toString())) {
             console.log(colors.yellow('链上无代签原文'))
@@ -57,7 +59,8 @@ export default class Respond {
 
             if (this.deviceType === 'ledger' || this.deviceType === 'trezor') {
                 const resultInputAndOutput = await getInputsAndOutputsFromTx(withdrawalTx.tx);
-                const signData = await this.device.sign(remove0x(withdrawalTx.tx), resultInputAndOutput.txInputs, remove0x(this.trusteeSessonInfo.hotAddress.redeemScript.toString()), 'mainnet')
+                const signData = await this.device.sign(remove0x(withdrawalTx.tx), resultInputAndOutput.txInputs,
+                    this.trusteeSessonInfo.hotAddress.redeemScript.replace(/^0x/, ''), properties.bitcoinType)
                 console.log(colors.green("签名成功!"))
                 console.log(colors.red(signData))
                 await this.submitIfRequired(JSON.stringify(signData));
