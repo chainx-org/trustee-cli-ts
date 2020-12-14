@@ -4,7 +4,7 @@ import { promtSelectDevice, isNull } from '../utils'
 import TrezorConnector from '../multisign/trezor'
 import Ledger from '../multisign/ledger'
 const colors = require('colors')
-//const { Worker, MessageChannel } = require('worker_threads');
+// const { Worker, MessageChannel } = require('worker_threads');
 
 module.exports = {
     name: 'tohot',
