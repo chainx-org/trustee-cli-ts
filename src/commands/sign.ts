@@ -4,6 +4,7 @@ import Api from "../api/chainx";
 import { getInputsAndOutputsFromTx } from '../api/bitcoin'
 import TrezorConnector from '../multisign/trezor'
 import Ledger from '../multisign/ledger'
+const bitcoin = require("bitcoinjs-lib");
 const colors = require('colors')
 
 module.exports = {
@@ -13,7 +14,6 @@ module.exports = {
         const {
             parameters
         } = toolbox
-
 
         const rawTx = parameters.first.toString();
         if (isNull(rawTx)) {
@@ -41,8 +41,28 @@ module.exports = {
 
         const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx,
             properties.bitcoinType);
+        if (selectDevice === 'trezor' || selectDevice === 'ledger') {
+            const signData = await device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(process.env.redeem_script), properties.bitcoinType);
+            console.log(JSON.stringify(signData))
+        } else {
 
-        const signData = await device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(process.env.redeem_script), properties.bitcoinType);
-        console.log(JSON.stringify(signData))
+            const tx = bitcoin.Transaction.fromHex(remove0x(rawTx));
+            const txb = bitcoin.TransactionBuilder.fromTransaction(tx, bitcoin.networks.bitcoin);
+
+            const keyPair = bitcoin.ECPair.fromWIF(
+                process.env.bitcoin_private_key,
+                bitcoin.networks.bitcoin
+            );
+            const redeemScript = Buffer.from(remove0x(process.env.redeem_script), "hex");
+            try {
+                for (let i = 0; i < tx.ins.length; i++) {
+                    txb.sign(i, keyPair, redeemScript);
+                }
+            } catch (e) {
+                console.error("签名出错：", e);
+                process.exit(1);
+            }
+
+        }
     },
 }
