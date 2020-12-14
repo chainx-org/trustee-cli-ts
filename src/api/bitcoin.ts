@@ -74,7 +74,6 @@ export async function calcTargetUnspents(utxos, amount, feeRate, required, total
 
 
 export const getInputsAndOutputsFromTx = async (tx, currentNetwork?) => {
-    console.log('get 0000000000')
     const getAddressFromScript = (script, network) => {
         try {
             return bitcoin.address.fromOutputScript(script, network);
@@ -104,9 +103,7 @@ export const getInputsAndOutputsFromTx = async (tx, currentNetwork?) => {
             ...(address ? {} : { err: true }),
         };
     });
-    console.log('get 44444444')
 
-    console.log(JSON.stringify(resultOutputs))
 
     const ins = txbRAW.__tx.ins.map(item => {
         return {
