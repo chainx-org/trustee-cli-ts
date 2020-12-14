@@ -5,9 +5,8 @@
 require("dotenv").config();
 require("console.table");
 import Api from "./chainx";
-import { getUnspents, calcTargetUnspents, getInputsAndOutputsFromTx } from "./bitcoin";
+import { getUnspents, calcTargetUnspents } from "./bitcoin";
 const bitcoin = require("bitcoinjs-lib");
-const { remove0x } = require("../utils");
 const colors = require('colors')
 
 
@@ -19,10 +18,6 @@ export default class CreateToHot {
         this.amount = Math.pow(10, 8) * parseFloat(rawAmount);
     }
 
-    async init(device: any, deviceType: string) {
-        this.device = device;
-        this.deviceType = deviceType;
-    }
 
     async contructToHot() {
         if (!process.env.bitcoin_fee_rate) {
@@ -39,10 +34,12 @@ export default class CreateToHot {
         const coldAddr = info.coldAddress.addr;
         const required = info.threshold;
 
-        const redeemScript = Buffer.from(
-            remove0x(info.coldAddress.redeemScript.toString()),
-            "hex"
-        );
+        // const redeemScript = Buffer.from(
+        //     remove0x(info.coldAddress.redeemScript.toString()),
+        //     "hex"
+        // );
+
+        console.log(colors.yellow(`redeem script ${info.coldAddress.redeemScript.toString()}`))
 
         const properties = await Api.getInstance().getChainProperties();
 
@@ -85,30 +82,6 @@ export default class CreateToHot {
         txb.addOutput(hotAddr, this.amount);
         if (change > 0) {
             txb.addOutput(coldAddr, change);
-        }
-
-        if (this.deviceType === 'privateKey') {
-            const keyPair = bitcoin.ECPair.fromWIF(
-                process.env.bitcoin_private_key,
-                network
-            );
-
-            let redeem = Buffer.from(remove0x(redeemScript), "hex");
-            for (let i = 0; i < txb.__inputs.length; i++) {
-                txb.sign(i, keyPair, redeem);
-            }
-
-        } else {
-            try {
-                const rawTx = txb.buildIncomplete().toHex();
-
-                const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx,
-                    properties.bitcoinType);
-                const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, info.coldAddress.redeemScript.replace(/^0x/, ''), properties.bitcoinType);
-                console.log(colors.green(`签名成功: \n ${signData}`))
-            } catch (err) {
-                console.log(colors.red(`签名失败:` + JSON.stringify(err)))
-            }
         }
 
         this.logInputs(targetInputs);
