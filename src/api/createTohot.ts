@@ -112,10 +112,9 @@ export default class CreateToHot {
         }
 
         this.logInputs(targetInputs);
-        this.logOutputs(txb, network);
 
         const rawTx = txb.buildIncomplete().toHex();
-        console.log("生成代签原文:");
+        console.log("未签原始交易:");
         console.log(rawTx);
         process.exit(0);
 
@@ -134,17 +133,6 @@ export default class CreateToHot {
                 amount: input.amount / Math.pow(10, 8) + " BTC"
             }))
         );
-    }
-
-    logOutputs(txb, network) {
-        console.log("提现列表:");
-        const normalizedOuts = txb.__tx.outs.map(out => {
-            const address = bitcoin.address.fromOutputScript(out.script, network);
-            const value = out.value / Math.pow(10, 8);
-            return { address, ["value(BTC)"]: value };
-        });
-
-        console.table(normalizedOuts);
     }
 
 }
