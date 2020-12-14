@@ -82,7 +82,7 @@ module.exports = {
             console.log(colors.red(`代签原文: \n ${withdrawTx.tx} \n`));
             const info = await api.getTrusteeSessionInfo();
             console.log(colors.yellow(`Hot Addres redeemScript: \n  ${info.hotAddress.redeemScript.toString()} \n`));
-            console.log(colors.white(`Cold Address redeemScript: \n  ${info.hotAddress.redeemScript.toString()} \n`));
+            console.log(colors.white(`Cold Address redeemScript: \n  ${info.coldAddress.redeemScript.toString()} \n`));
             await parseRawTxAndLog(withdrawTx.tx);
 
             if (withdrawTx.trusteeList.length <= 0) {

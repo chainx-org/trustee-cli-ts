@@ -5,7 +5,7 @@ const bitcoinjs = require("bitcoinjs-lib");
 const { getRedeemScriptFromRaw } = require("./bitcoin-utils");
 
 const bitcore = require("bitcore-lib");
-const mainnetPath = "m/45'/0'/0'/0/0";
+const mainnetPath = "m/44'/0'/0'/0/0";
 const testnetPath = "m/45'/1'/0'/0/0";
 
 class Ledger {
@@ -73,7 +73,7 @@ class Ledger {
 
             txObj.to(address.toString(), output.satoshis);
         }
-        console.log(JSON.stringify(redeemScript))
+        console.log('redeem script:' + JSON.stringify(redeemScript))
         this.applyAlreadyExistedSig(txObj, raw);
 
         return txObj;
@@ -99,10 +99,7 @@ class Ledger {
                     signature: bitcore.crypto.Signature.fromBuffer(sig, false),
                     sigtype: bitcore.crypto.Signature.SIGHASH_ALL,
                     publicKey: bitcore.PublicKey(pubkey, {
-                        network:
-                            this.network === "mainnet"
-                                ? bitcore.Networks.mainnet
-                                : bitcore.Networks.testnet,
+                        network: bitcore.Networks.mainnet,
                         compressed: true
                     })
                 };
