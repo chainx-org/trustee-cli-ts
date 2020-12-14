@@ -36,6 +36,12 @@ class Ledger {
         return key;
     }
 
+    async getBitcoinAddress() {
+        const path = mainnetPath;
+        const result = await this.appBtc.getWalletPublicKey(path);
+        return result.bitcoinAddress;
+    }
+
     public constructTxObj(raw, inputArr, redeemScript) {
 
         const net = bitcore.Networks.mainnet;

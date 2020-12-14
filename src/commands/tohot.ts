@@ -56,7 +56,8 @@ module.exports = {
             type = selectDevice;
             console.log('正在使用ledger....')
             const publicKey = await ledger.getPublicKey()
-            console.log(`ledger publickKey: ${publicKey}`)
+            const address = await ledger.getBitcoinAddress();
+            console.log(`ledger publickKey: ${publicKey} \n  bicoin address  ${address} `)
         }
 
         const createToHot = new CreateTohot(amount)
