@@ -161,7 +161,6 @@ export const fetchNodeTxsFromTxidList = async (ids) => {
         );
         const json = await response.json();
 
-        console.log(JSON.stringify(json))
 
         return json;
     });

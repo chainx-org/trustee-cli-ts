@@ -48,7 +48,7 @@ module.exports = {
                 console.log(colors.red(`签名后交易原文:\n  ${JSON.stringify(signData)}`))
                 process.exit(0);
             } catch (err) {
-                console.log('签名失败，请确认赎回脚本配置是否正确')
+                console.log(colors.red('签名失败:' + JSON.stringify(err)))
                 process.exit(0);
             }
 

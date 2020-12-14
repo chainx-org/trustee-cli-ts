@@ -263,13 +263,13 @@ class TrezorConnector extends EventEmitter {
         }
 
         const transaction = bitcoin.Transaction.fromHex(raw);
-        console.log(`hardware ........................ ${JSON.stringify(transaction)}`)
+
 
         const [devicePubKey, deviceXpub] = await this.getDeviceXpub(network);
-        console.log(`hardware sign2 ........................ ${JSON.stringify(devicePubKey)}`)
+
         const inputs = constructInputs(transaction, redeemScript, devicePubKey, deviceXpub, network);
         const outputs = constructOutputs(raw, network);
-        console.log(`hardware sign3 ........................ ${JSON.stringify(inputs)}`)
+
         const txs = constructPreTxs(inputsArr);
 
         const signResult = await this.device.waitForSessionAndRun(function (
