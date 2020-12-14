@@ -57,7 +57,7 @@ export default class Respond {
 
             if (this.deviceType === 'ledger' || this.deviceType === 'trezor') {
                 const resultInputAndOutput = await getInputsAndOutputsFromTx(withdrawalTx.tx);
-                const signData = await this.device.sign(remove0x(withdrawalTx.tx), resultInputAndOutput.txInputs, remove0x(this.trusteeSessonInfo.hotAddress.redeemScript.toString()), 'testnet')
+                const signData = await this.device.sign(remove0x(withdrawalTx.tx), resultInputAndOutput.txInputs, remove0x(this.trusteeSessonInfo.hotAddress.redeemScript.toString()), 'mainnet')
                 console.log(colors.green("签名成功!"))
                 console.log(colors.red(signData))
                 await this.submitIfRequired(JSON.stringify(signData));

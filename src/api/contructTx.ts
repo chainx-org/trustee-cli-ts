@@ -210,28 +210,22 @@ export default class ContstructTx {
     }
 
     async signIfRequired(txb, network) {
-        console.log(`sign........................1`)
 
         const rawTx = txb.buildIncomplete().toHex();
         if (!this.needSign) {
             return false;
         }
         const info = await this.api.getTrusteeSessionInfo();
-        console.log(`sign........................2 ${JSON.stringify(rawTx)}`)
-
         const redeemScript = Buffer.from(
             remove0x(info.hotAddress.redeemScript.toString()),
             "hex"
         );
-        console.log(`sign........................ ${info.hotAddress.redeemScript.toString()}`)
 
         if (this.deviceType === 'trezor' || this.deviceType === 'ledger') {
-            if (!this.device.isConnected()) {
-                console.log('硬件钱包未连接，请拔掉设备重新初始化')
-            }
+
             const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx);
 
-            const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(info.hotAddress.redeemScript.toString()), 'testnet');
+            const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(info.hotAddress.redeemScript.toString()), 'mainnet');
             console.log(`签名成功: \n ${signData}`)
             process.exit(0)
 
