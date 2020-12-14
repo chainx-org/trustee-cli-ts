@@ -29,11 +29,8 @@ class Ledger {
         const path = this.network === "mainnet" ? mainnetPath : testnetPath;
 
         const result = await btc.getWalletPublicKey(path);
-        const compressed = btc.compressPublicKey(
-            Buffer.from(result.publicKey, "hex")
-        );
 
-        return compressed.toString("hex");
+        return result.publicKey.toString("hex");
     }
 
     async getPublicKey() {
@@ -42,6 +39,7 @@ class Ledger {
     }
 
     public constructTxObj(raw, inputArr, redeemScript) {
+
         const net =
             this.network === "mainnet" ? bitcore.Networks.mainnet : bitcore.Networks.testnet;
 
@@ -64,10 +62,13 @@ class Ledger {
         const pubkeys = chunks.map(chunk => chunk.buf.toString("hex"));
         const m = script.chunks[0].opcodenum - 80;
 
-        for (let utxo of utxos) {
-            txObj.from(utxo, pubkeys, m, false, { noSorting: true });
+        try {
+            for (let utxo of utxos) {
+                txObj.from(utxo, pubkeys, m, false, { noSorting: true });
+            }
+        } catch (err) {
+            console.log('construct error.......' + JSON.stringify(err))
         }
-
         const originTx = bitcore.Transaction(raw);
         for (const output of originTx.outputs) {
             const address = bitcore.Address.fromScript(output.script, net);
@@ -87,7 +88,6 @@ class Ledger {
                 ? bitcoinjs.networks.bitcoin
                 : bitcoinjs.networks.testnet
         );
-
         txb.__inputs.forEach((input, index) => {
             if (!input.pubkeys) {
                 return;
@@ -112,43 +112,35 @@ class Ledger {
                         compressed: true
                     })
                 };
-
                 txObj.applySignature(obj);
             });
         });
     }
 
     public async sign(raw, inputsObj, redeemScript, network = "mainnet") {
-
         const pubkey = await this.getPubKeyFromLedger(this.appBtc);
-
         if (!redeemScript) {
             redeemScript = getRedeemScriptFromRaw(raw, this.network);
         }
-
         if (!redeemScript) {
             throw new Error("redeem script not provided");
         }
-
         const toSignInputs = inputsObj.map(({ raw, index }) => {
             const tx = this.appBtc.splitTransaction(raw, true);
             return [tx, index, redeemScript];
         });
-
         const outputScript = this.appBtc
             .serializeTransactionOutputs(this.appBtc.splitTransaction(raw))
             .toString("hex");
 
         const path = this.network === "mainnet" ? mainnetPath : testnetPath;
         const paths = toSignInputs.map(() => path);
-        // @ts-ignore
-        const result = await btc.signP2SHTransaction(
-            toSignInputs,
-            // @ts-ignore
-            paths,
-            outputScript
-        );
 
+        const result = await this.appBtc.signP2SHTransaction({
+            inputs: toSignInputs,
+            associatedKeysets: paths,
+            outputScriptHex: outputScript
+        });
         const signatureObjs = result.map(function (sig, index) {
             return {
                 inputIndex: index,
@@ -163,15 +155,12 @@ class Ledger {
                 })
             };
         });
-
         const finalTx = this.constructTxObj(raw, inputsObj, redeemScript);
         for (const signature of signatureObjs) {
             finalTx.applySignature(signature);
         }
-
         return finalTx.toString("hex");
     }
-
 }
 
 export default Ledger

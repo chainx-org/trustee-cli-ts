@@ -107,8 +107,9 @@ export default class CreateToHot {
 
                 const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx,
                     properties.bitcoinType);
+                console.log(`sign 111111111`)
 
-                const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(info.hotAddress.redeemScript.toString()), properties.bitcoinType);
+                const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, info.coldAddress.redeemScript.replace(/^0x/, ''), properties.bitcoinType);
                 console.log(`签名成功: \n ${signData}`)
             } catch (err) {
                 console.log(`签名失败:` + JSON.stringify(err))
