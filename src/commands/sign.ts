@@ -43,7 +43,8 @@ module.exports = {
             properties.bitcoinType);
         if (selectDevice === 'trezor' || selectDevice === 'ledger') {
             const signData = await device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(process.env.redeem_script), properties.bitcoinType);
-            console.log(JSON.stringify(signData))
+            console.log(colors.green(`签名成功\n`))
+            console.log(colors.red(`签名后交易原文:\n  ${JSON.stringify(signData)}`))
         } else {
 
             const tx = bitcoin.Transaction.fromHex(remove0x(rawTx));
