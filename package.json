@@ -1,6 +1,6 @@
 {
   "name": "trustee-tools",
-  "version": "0.0.1",
+  "version": "2.0.1",
   "description": "trustee-tools CLI",
   "private": true,
   "types": "build/types/types.d.ts",
