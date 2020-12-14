@@ -4,7 +4,6 @@ import { promtSelectDevice, isNull } from '../utils'
 import TrezorConnector from '../multisign/trezor'
 import Ledger from '../multisign/ledger'
 const colors = require('colors')
-// const { Worker, MessageChannel } = require('worker_threads');
 
 module.exports = {
     name: 'tohot',
@@ -21,20 +20,6 @@ module.exports = {
             process.exit(0)
         }
 
-        // let code = `
-        //     const { parentPort } = require('worker_threads');
-        //     parentPort.on('message', (device) => {
-        //         console.log('子线程2收到message');
-        //         device.on("button", code => {
-        //            this.emit("button", code);
-        //         });
-        //         device.on("pin", code => {
-        //            请输入pin码
-        //         });
-        //     })            
-        // `
-
-
         const selectDevice = await promtSelectDevice()
 
         let device: any = null;
@@ -46,9 +31,11 @@ module.exports = {
             await trezor.init()
             device = trezor;
             console.log(` Trezor 连接状态: ${trezor.isConnected()}`)
-            // const worker = new Worker(code, { eval: true });
-            // worker.postMessage(device);
-            // console.log('主线程执行完毕 \n');
+            device.on("pin", device.pinCallback);
+
+            device.on('disconnect', function () {
+                console.log('Disconnected an opened device');
+            });
         } else if (selectDevice === 'ledger') {
             const ledger = new Ledger('mainnet')
             await ledger.init()

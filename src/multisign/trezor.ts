@@ -189,24 +189,21 @@ class TrezorConnector extends EventEmitter {
             this.list.on("connect", device => {
                 // FIXME: 这里没有考虑多个设备的情况
 
-                this.device = device
-
+                this.device = device;
                 spinner.stop();
-                resolve(device)
+                resolve(device);
+                device.on("disconnect", () => {
+                    this.device.removeAllListeners();
+                    this.device = null;
+                    this.emit("disconnect");
+                });
 
-                // device.on("disconnect", () => {
-                //     this.device.removeAllListeners();
-                //     this.device = null;
-                //     this.emit("disconnect");
-                // });
+                device.on("button", code => {
+                    console.log('press trezor button!')
+                    this.emit("button", code);
+                });
 
-                // device.on("button", code => {
-                //     this.emit("button", code);
-                // });
-
-                // device.on("pin", (type, callback) => {
-                //     this.emit("pin", type, callback);
-                // });
+                device.on("pin", this.pinCallback);
             });
 
         })
@@ -215,6 +212,29 @@ class TrezorConnector extends EventEmitter {
 
     isConnected() {
         return !!this.device;
+    }
+
+    /**
+     * @param {string} type
+    * @param {Function<Error, string>} callback
+    */
+    pinCallback(type, callback) {
+        console.log('Please enter PIN. The positions:');
+        console.log('7 8 9');
+        console.log('4 5 6');
+        console.log('1 2 3');
+
+        // note - disconnecting the device should trigger process.stdin.pause too, but that
+        // would complicate the code
+
+        // we would need to pass device in the function and call device.on('disconnect', ...
+
+        process.stdin.resume();
+        process.stdin.on('data', function (buffer) {
+            var text = buffer.toString().replace(/\n$/, "");
+            process.stdin.pause();
+            callback(null, text);
+        });
     }
 
     async getDeviceXpub(network = "mainnet") {
