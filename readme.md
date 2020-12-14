@@ -3,10 +3,6 @@
 A CLI for trustee-tools.
 
 
-[UI信托工具下载 mac](https://chainx.oss-cn-beijing.aliyuncs.com/ChainX%20Wallet%20for%20Trustee-2.0.1.dmg?Expires=1607662928&OSSAccessKeyId=TMP.3KiWwJ6vcPLypgt2Rbbd3y1rofVoRxcythvDrZcfeMr19D6BgMEEyQn7BHs1x7toWmmdTGR7N92VemurQFWtUuj6nxChvu&Signature=%2FRc8C7WXDC5s%2B%2FppD%2F8deEQ%2BZ4s%3D&versionId=CAEQDhiBgMCki8mushciIGRjOThmNTIzOTZjNDQ5ODM5YWM4YTRkZWRkOTY0Yzdh&response-content-type=application%2Foctet-stream)
-
-[UI信托工具下载 win](https://chainx.oss-cn-beijing.aliyuncs.com/ChainX%20Wallet%20for%20Trustee-2.0.1-win.zip?Expires=1607663292&OSSAccessKeyId=TMP.3KiWwJ6vcPLypgt2Rbbd3y1rofVoRxcythvDrZcfeMr19D6BgMEEyQn7BHs1x7toWmmdTGR7N92VemurQFWtUuj6nxChvu&Signature=%2F45lZpo%2FU7V7c%2F4zcSxvUzCNQN8%3D&versionId=CAEQDhiBgIDoz_e_shciIDUwODhiNjk1NmIxMDRmMzE4ZWU1NTI2OTFiZDRkMTNj&response-content-type=application%2Foctet-stream)
-
 ## Init Environment
 
 ```shell
@@ -57,12 +53,8 @@ ChainX 账户私钥，用于签名并提交 ChainX 交易。
    ```
  * 4. **复制签名后返回的交易原文，进入下一步**
    
-### 二、使用信托UI工具构造特殊交易进行签名
+  
 
-[UI信托工具下载](https://chainx.oss-cn-beijing.aliyuncs.com/ChainX%20Wallet%20for%20Trustee-2.0.1.dmg?Expires=1607590467&OSSAccessKeyId=TMP.3KhyqjuNDZN4THF1XZVLoTfVZDFFkruTVummvgqh6AbdeqwBKevtc6SnPHtH21RNLwqn99hdFHtN7QvcSVf5zCNp8tC6DK&Signature=3alLoATLl5%2FxfYYOlldndqpeH1g%3D&versionId=CAEQDhiBgMCki8mushciIGRjOThmNTIzOTZjNDQ5ODM5YWM4YTRkZWRkOTY0Yzdh&response-content-type=application%2Foctet-stream)
-
-
-![image](https://user-images.githubusercontent.com/7252280/101735161-6aa06c00-3afc-11eb-8d61-4053213c777e.png)
 ### 三、 复制签名后的交易原文提交上链
 
    ```
