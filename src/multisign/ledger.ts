@@ -57,6 +57,7 @@ class Ledger {
             };
         });
 
+
         const script = bitcore.Script.fromString(redeemScript);
         const chunks = script.chunks.slice(1, script.chunks.length - 2);
         const pubkeys = chunks.map(chunk => chunk.buf.toString("hex"));
@@ -75,6 +76,7 @@ class Ledger {
 
             txObj.to(address.toString(), output.satoshis);
         }
+        console.log(JSON.stringify(redeemScript))
         this.applyAlreadyExistedSig(txObj, raw);
 
         return txObj;
@@ -159,7 +161,8 @@ class Ledger {
         for (const signature of signatureObjs) {
             finalTx.applySignature(signature);
         }
-        return finalTx.toString("hex");
+
+        return finalTx.toString('hex');
     }
 }
 
