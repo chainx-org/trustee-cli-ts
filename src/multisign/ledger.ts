@@ -66,14 +66,16 @@ class Ledger {
                 satoshis: input.satoshi
             };
         });
-        console.log('construct .......4')
+        console.log('construct .......4 ' + JSON.stringify(redeemScript))
 
 
         const script = bitcore.Script.fromString(redeemScript);
+        console.log('construct .......5')
         const chunks = script.chunks.slice(1, script.chunks.length - 2);
+        console.log('construct .......6' + JSON.stringify(chunks))
         const pubkeys = chunks.map(chunk => chunk.buf.toString("hex"));
         const m = script.chunks[0].opcodenum - 80;
-        console.log('construct .......5')
+        console.log('construct .......7')
 
         try {
             for (let utxo of utxos) {
