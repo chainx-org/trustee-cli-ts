@@ -17,7 +17,7 @@ module.exports = {
 
         let rawTx = parameters.first.toString();
         if (isNull(rawTx)) {
-            console.log(colors.red('请添加代签原文: trustee-tools submit 0x000000001000.... '))
+            console.log(colors.red('请添加代签原文: trustee-tools submit 000000001000.... '))
             process.exit(0);
         }
 
