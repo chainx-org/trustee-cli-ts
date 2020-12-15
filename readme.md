@@ -68,13 +68,11 @@ ChainX 账户私钥，用于签名并提交 ChainX 交易。
 
 ### 三、 复制签名后的交易原文提交上链
 
-   ```
-     trustee-tools submit 0x000......
-   
-   ```
+```
+trustee-tools submit 0x000......   
+```
 
 ## 热转冷
-
 ```
 trustee-tools  tohot  要转的btc数量
 ```
@@ -92,7 +90,6 @@ trustee-tools  tocold  要转的btc数量
 ```
 trustee-tools  sign 代签原文
 ```
-
 # License
 
 MIT - see LICENSE
