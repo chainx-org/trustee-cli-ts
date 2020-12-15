@@ -160,10 +160,6 @@ export const fetchNodeTxsFromTxidList = async (ids) => {
             }
         );
         const json = await response.json();
-
-        console.log(`6666 + ${JSON.stringify(json)}`)
-
-
         return json;
     });
     let res = await Promise.all(actions);
