@@ -40,7 +40,7 @@ module.exports = {
         const properties = await Api.getInstance().getChainProperties();
 
         const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx,
-            properties.bitcoinType);
+            "mainnet");
         console.log(`selectDevice ${selectDevice}`)
         if (selectDevice === 'trezor' || selectDevice === 'ledger') {
             console.log(`trezor sign 111`)
@@ -48,7 +48,7 @@ module.exports = {
                 console.log(selectDevice)
                 console.log(`trezor sign 222 ${properties.bitcoinType}`)
 
-                const signData = await device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(process.env.redeem_script), properties.bitcoinType);
+                const signData = await device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(process.env.redeem_script), 'mainnet');
                 console.log(`trezor sign 111`)
                 console.log(colors.green(`签名成功\n`))
                 console.log(colors.red(`签名后交易原文:\n  ${JSON.stringify(signData)}`))

@@ -250,27 +250,41 @@ class TrezorConnector extends EventEmitter {
     }
 
     async sign(raw, inputsArr, redeemScript, network = "mainnet") {
+        console.log(`trezeor sign 111111`)
         if (!this.device) {
             throw new Error("No device");
         }
+        console.log(`trezeor sign 2222222`)
 
         if (!redeemScript) {
             redeemScript = getRedeemScriptFromRaw(raw, network);
         }
 
+        console.log(`trezeor sign 333333`)
+
         if (!redeemScript) {
             throw new Error("redeem script not provided");
         }
 
+        console.log(`trezeor sign 4444444`)
+
         const transaction = bitcoin.Transaction.fromHex(raw);
+
+        console.log(`trezeor sign 555555555`)
 
 
         const [devicePubKey, deviceXpub] = await this.getDeviceXpub(network);
 
+        console.log(`trezeor sign 56666  ${network}`)
+
         const inputs = constructInputs(transaction, redeemScript, devicePubKey, deviceXpub, network);
+
+        console.log(`trezeor sign 6666  ${inputs}`)
         const outputs = constructOutputs(raw, network);
 
         const txs = constructPreTxs(inputsArr);
+
+        console.log(`trezeor sign 77777 `)
 
         const signResult = await this.device.waitForSessionAndRun(function (
             session
