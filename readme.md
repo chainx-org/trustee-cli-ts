@@ -46,28 +46,50 @@ ChainX 账户私钥，用于签名并提交 ChainX 交易。
    ```
     trustee-tools tx
    ```
- * 3. 无代签原文则进行create构建（需设置信托私钥）
-   
+ * 3. 构造代签原文
+    * 构造原文后进行签名并提交上链(推荐)
+   ```
+     trustee-tools create sign submit
+   ```
+   * 构造原文后不进行签名提交上链
    ```
      trustee-tools create submit
    ```
- * 4. **复制签名后返回的交易原文，进入下一步**
-   
-  
+ * 4. 响应代签原文
+ 
+   * 使用硬件钱包(ledger或trezor)进行签名并提交上链 
+   ```
+   trustee-tools respond signHardware submit
+   ```  
+   * 使用比特币私钥进行签名并提交上链
+   ```
+    trustee-tools respond submit
+   ```
 
 ### 三、 复制签名后的交易原文提交上链
 
-   ```
-     trustee-tools submit 0x000......
-   
-   ```
+```
+trustee-tools submit 0x000......   
+```
 
 ## 热转冷
+```
+trustee-tools  tohot  要转的btc数量
+```
+
+## 冷转热
 
 ```
-trustee-tools  tc
+trustee-tools  tocold  要转的btc数量
 ```
 
+## 使用硬件钱包或者私钥进行签名
+
+1. 配置.env中的redeem_script赎回脚本
+
+```
+trustee-tools  sign 代签原文
+```
 # License
 
 MIT - see LICENSE
