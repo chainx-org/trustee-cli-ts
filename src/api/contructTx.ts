@@ -210,6 +210,7 @@ export default class ContstructTx {
     }
 
     async signIfRequired(txb, network) {
+        let signResult = false;
 
         const properties = await this.api.getChainProperties();
 
@@ -229,7 +230,8 @@ export default class ContstructTx {
 
             const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, info.coldAddress.redeemScript.replace(/^0x/, ''), properties.bitcoinType);
             console.log(`签名成功: \n ${signData}`)
-            process.exit(0)
+            signResult = true;
+
 
         } else {
             if (!process.env.bitcoin_private_key) {
@@ -243,9 +245,10 @@ export default class ContstructTx {
             for (let i = 0; i < txb.__inputs.length; i++) {
                 txb.sign(i, keyPair, redeemScript);
             }
+            signResult = true;
 
         }
-        return true;
+        return signResult;
     }
 
     async submitIfRequired(withdrawals, rawTx) {
