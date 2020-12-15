@@ -58,7 +58,7 @@ export default class Respond {
             await this.parseRawTxAndLog(withdrawalTx.tx);
 
             if (this.deviceType === 'ledger' || this.deviceType === 'trezor') {
-                const resultInputAndOutput = await getInputsAndOutputsFromTx(withdrawalTx.tx);
+                const resultInputAndOutput = await getInputsAndOutputsFromTx(withdrawalTx.tx, properties.bitcoinType);
                 const signData = await this.device.sign(withdrawalTx.tx, resultInputAndOutput.txInputs,
                     this.trusteeSessonInfo.hotAddress.redeemScript.replace(/^0x/, ''), properties.bitcoinType)
                 console.log(colors.green("签名成功!"))

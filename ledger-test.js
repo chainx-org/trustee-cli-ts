@@ -5,7 +5,7 @@ const AppBtc = require("@ledgerhq/hw-app-btc").default;
 async function example() {
     const transport = await TransportNodeHid.create();
     const appBtc = new AppBtc(transport);
-    const result = await appBtc.getWalletPublicKey("45'/1'/0'/0/0");
+    const result = await appBtc.getWalletPublicKey("45'/0'/0'/0/0");
     return result;
 }
 

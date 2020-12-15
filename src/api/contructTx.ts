@@ -226,7 +226,7 @@ export default class ContstructTx {
 
         if (this.deviceType === 'trezor' || this.deviceType === 'ledger') {
 
-            const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx);
+            const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx, properties.bitcoinType);
 
             const signData = await this.device.sign(rawTx, inputAndOutPutResult.txInputs, info.coldAddress.redeemScript.replace(/^0x/, ''), properties.bitcoinType);
             console.log(`签名成功: \n ${signData}`)
