@@ -164,7 +164,6 @@ export const fetchNodeTxsFromTxidList = async (ids) => {
     });
     let res = await Promise.all(actions);
 
-    console.log(JSON.stringify(res))
 
     if (res && res.length) {
         return res.map((item, index) => ({
