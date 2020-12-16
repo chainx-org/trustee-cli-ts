@@ -17,7 +17,7 @@ export default class SubmitTx {
             console.error("没有设置chainx_private_key");
             process.exit(1);
         }
-        console.log(colors.green("\n开始构造并提交ChainX信托交易..."));
+        console.log(colors.green("\n提交ChainX信托交易签名..."));
         const currentAccount = await this.api.getAccountKeyring();
         console.log(colors.blue(`当前信托账户: ${currentAccount.address}`))
 

@@ -147,6 +147,7 @@ export default class Respond {
             add0x(rawTx)
         );
 
+        console.log(`当前提提交tx ${rawTx}`);
         await extrinsic.signAndSend(alice, ({ events = [], status }) => {
             console.log(`Current status is ${status.type}`);
             if (status.isFinalized) {
