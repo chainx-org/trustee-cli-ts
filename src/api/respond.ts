@@ -29,10 +29,7 @@ export default class Respond {
             remove0x(info.hotAddress.redeemScript.toString()),
             'hex'
         )
-        if (!process.env.bitcoin_private_key) {
-            console.error("没有设置bitcoin_private_key");
-            process.exit(1);
-        }
+
         this.device = device;
         this.deviceType = deviceType;
     }
