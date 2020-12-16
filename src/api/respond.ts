@@ -65,7 +65,7 @@ export default class Respond {
                 console.log(colors.red(signData))
                 await this.submitIfRequired(JSON.stringify(signData));
             } else {
-                await this.sign(withdrawalTx.tx);
+                await this.sign(remove0x(withdrawalTx.tx));
             }
 
             if (!this.needSubmit) {
