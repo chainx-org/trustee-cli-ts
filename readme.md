@@ -47,11 +47,6 @@ ChainX 账户私钥，用于签名并提交 ChainX 交易。
     trustee-tools tx
    ```
  * 3. 构造代签原文
-    * 构造原文后进行签名并提交上链(推荐)
-   ```
-     trustee-tools create sign submit
-   ```
-   * 构造原文后不进行签名提交上链
    ```
      trustee-tools create submit
    ```
