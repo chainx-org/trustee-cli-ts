@@ -27,28 +27,30 @@ module.exports = {
         let sign: boolean = parameters.first === 'sign';
         let submit: boolean = parameters.second === 'submit' || parameters.first === 'submit';
 
-        const selectDevice = await promtSelectDevice()
-
-        let device: any = null;
-        let type: string = selectDevice
-
-        if (selectDevice === 'trezor') {
-            const trezor = new TrezorConnector();
-            type = selectDevice;
-            await trezor.init()
-            device = trezor;
-            console.log(trezor.isConnected())
-        } else if (selectDevice === 'ledger') {
-            const ledger = new Ledger('mainnet')
-            await ledger.init()
-            device = ledger;
-            console.log('正在使用ledger....')
-            const publicKey = await ledger.getPublicKey()
-            console.log(`ledger publickKey: ${publicKey}`)
-        }
-
         const constructTx = new ContstructTx(sign, submit)
-        constructTx.init(device, type)
+
+        if (sign) {
+            const selectDevice = await promtSelectDevice()
+
+            let device: any = null;
+            let type: string = selectDevice
+
+            if (selectDevice === 'trezor') {
+                const trezor = new TrezorConnector();
+                type = selectDevice;
+                await trezor.init()
+                device = trezor;
+                console.log(trezor.isConnected())
+            } else if (selectDevice === 'ledger') {
+                const ledger = new Ledger('mainnet')
+                await ledger.init()
+                device = ledger;
+                console.log('正在使用ledger....')
+                const publicKey = await ledger.getPublicKey()
+                console.log(`ledger publickKey: ${publicKey}`)
+            }
+            constructTx.init(device, type)
+        }
         await constructTx.construct()
 
     },
