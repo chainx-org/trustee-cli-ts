@@ -43,5 +43,13 @@ export class BtcWithdrawalProposal {
 
 export interface AlreadySigned {
     accountId: string;
+    address: string;
     signed: boolean;
+}
+
+export class ValidatorProfile {
+    registeredAt: string;
+    isChilled: string;
+    lastChilled: string;
+    referralId: string;
 }

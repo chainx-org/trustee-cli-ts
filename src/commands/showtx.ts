@@ -49,18 +49,20 @@ async function logSignedIntentions(trusteeList) {
 
     const singedInfoList: AlreadySigned[] = [];
     for (let info of infoList.trusteeList) {
+        const validatorNames = await Api.getInstance().getNodeNames(info);
         singedInfoList.push({
-            accountId: info,
+            accountId: validatorNames.referralId,
+            address: info,
             signed: !isNull(alreadySignedList.find(item => item === info))
         })
     }
 
     const table = new Table({
-        head: ['id', 'accountId', 'signed']
+        head: ['id', 'accountId', 'address', 'signed']
     });
 
-    singedInfoList.map((item, index) => {
-        table.push([index, item.accountId, item.signed])
+    singedInfoList.map(async (item, index) => {
+        table.push([index, item.accountId, item.address, item.signed])
     })
     console.log(colors.yellow(table.toString()))
 
