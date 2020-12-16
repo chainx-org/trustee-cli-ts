@@ -72,6 +72,12 @@ ChainX 账户私钥，用于签名并提交 ChainX 交易。
 trustee-tools submit 0x000......   
 ```
 
+### 否决签名
+
+```
+trustee-tools submit null   
+```
+
 ## 热转冷
 ```
 trustee-tools  tohot  要转的btc数量
