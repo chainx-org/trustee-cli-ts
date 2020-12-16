@@ -63,7 +63,7 @@ export default class Respond {
                     this.trusteeSessonInfo.hotAddress.redeemScript.replace(/^0x/, ''), properties.bitcoinType)
                 console.log(colors.green("签名成功!"))
                 console.log(colors.red(signData))
-                await this.submitIfRequired(JSON.stringify(signData));
+                await this.submitIfRequired(signData);
             } else {
                 await this.sign(remove0x(withdrawalTx.tx));
             }

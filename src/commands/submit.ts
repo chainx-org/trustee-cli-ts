@@ -6,7 +6,7 @@ const colors = require('colors')
 
 module.exports = {
     name: 'submitTx',
-    alias: ['submitTx'],
+    alias: ['submit'],
     run: async (toolbox: GluegunToolbox) => {
         const {
             parameters
