@@ -132,11 +132,6 @@ export default class Respond {
 
         console.log("\n开始构造并提交ChainX信托交易...");
 
-        if (!process.env.chainx_private_key) {
-            console.error("没有设置chainx_private_key");
-            process.exit(1);
-        }
-
         const alice = await this.api.getAccountKeyring();
         console.log(`当前信托账户: ${alice}`)
 
