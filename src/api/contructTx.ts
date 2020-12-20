@@ -131,8 +131,6 @@ export default class ContstructTx {
     calculateWithOutSum(withdrawals: WithdrawaItem[], fees: number) {
         let outSum = 0;
         withdrawals.forEach(item => {
-            console.log(`222` + JSON.stringify(item))
-
             let balanceWithFees = Number(item.balance) - fees;
             outSum += balanceWithFees;
         })
