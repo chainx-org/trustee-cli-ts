@@ -156,13 +156,8 @@ export default class ContstructTx {
 
         let outSum = this.calculateWithOutSum(withdrawals, fee);
 
-
-
-        console.log('111111111%% ' + outSum)
-
         let targetInputs = pickUtxos(unspents, outSum);
 
-        console.log(22222 + JSON.stringify(targetInputs))
         let inputSum = targetInputs.reduce((sum, input) => sum + input.amount, 0);
         let bytes =
             targetInputs.length * (48 + 73 * required + 34 * total) +

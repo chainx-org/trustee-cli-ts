@@ -47,8 +47,9 @@ export default class CreateToHot {
         console.log(`bitcoin type ${properties.bitcoinType}`)
 
         const unspents = await getUnspents(coldAddr, properties.bitcoinType);
-        unspents.sort((a, b) => Number(b.amount) - Number(a.amount));
-
+        unspents.sort((a, b) => {
+            return b.amount - a.amount
+        });
 
         const [targetInputs, minerFee] = await calcTargetUnspents(
             unspents,
