@@ -15,7 +15,7 @@ async function parseRawTxAndLog(rawTx) {
     const normalizedOuts = tx.outs.map(out => {
         const address = bitcoin.address.fromOutputScript(
             out.script,
-            bitcoin.networks.testnet
+            bitcoin.networks.bitcoin
         );
         const value = out.value / Math.pow(10, 8);
         return { address, ["value(BTC)"]: value };
