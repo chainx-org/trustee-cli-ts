@@ -2,7 +2,6 @@ import Api from './chainx'
 import { getUnspents, pickUtxos, getInputsAndOutputsFromTx } from './bitcoin'
 import { remove0x, add0x } from '../utils'
 import { WithDrawLimit, WithdrawaItem } from './types';
-
 const { MultiSelect } = require('enquirer');
 const colors = require('colors')
 require("dotenv").config()
@@ -129,6 +128,17 @@ export default class ContstructTx {
         );
     }
 
+    calculateWithOutSum(withdrawals: WithdrawaItem[], fees: number) {
+        let outSum = 0;
+        withdrawals.forEach(item => {
+            console.log(`222` + JSON.stringify(item))
+
+            let balanceWithFees = Number(item.balance) - fees;
+            outSum += balanceWithFees;
+        })
+        return outSum;
+    }
+
     async composeBtcTx(withdrawals, fee) {
         const info = await this.api.getTrusteeSessionInfo();
         const properties = await this.api.getChainProperties();
@@ -139,13 +149,20 @@ export default class ContstructTx {
         const total = info.trusteeList.length;
 
         const unspents = await getUnspents(addr, properties.bitcoinType);
-        unspents.sort((a, b) => Number(b.amount) - Number(a.amount));
 
-        let outSum = withdrawals.reduce(
-            (result, withdraw) => result + withdraw.balance - fee,
-            0
-        );
+        unspents.sort((a, b) => {
+            return b.amount - a.amount
+        });
+
+        let outSum = this.calculateWithOutSum(withdrawals, fee);
+
+
+
+        console.log('111111111%% ' + outSum)
+
         let targetInputs = pickUtxos(unspents, outSum);
+
+        console.log(22222 + JSON.stringify(targetInputs))
         let inputSum = targetInputs.reduce((sum, input) => sum + input.amount, 0);
         let bytes =
             targetInputs.length * (48 + 73 * required + 34 * total) +

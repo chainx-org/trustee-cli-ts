@@ -19,7 +19,7 @@ module.exports = {
         });
 
         withdrawList.map(item => {
-            table.push([item.id, item.assetId, item.applicant, item.balance / Math.pow(10, 8), item.addr, item.state])
+            table.push([item.id, item.assetId, item.applicant, Number(item.balance) / Math.pow(10, 8), item.addr, item.state])
         })
 
         console.log(colors.yellow(table.toString()))

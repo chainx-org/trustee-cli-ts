@@ -22,7 +22,7 @@ export class WithdrawaItem {
     id: string;
     assetId: number;
     applicant: string;
-    balance: number;
+    balance: string;
     addr: string;
     ext: string;
     height: number;
