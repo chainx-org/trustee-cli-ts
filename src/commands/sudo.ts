@@ -14,6 +14,7 @@ module.exports = {
 
         console.log(`第一个参数为: ${parameters.first}`)
         const filepath = parameters.first
+        const isSubmit = parameters.second
         const data = fs.readFileSync(filepath, 'utf8')
         const lines = data.split(/\r?\n/)
         const nodeInfo = [];
@@ -23,6 +24,10 @@ module.exports = {
             let oldPot = null
             let newPot = null
             let balance = null
+            if (!infolist[0] || !infolist[1] || !infolist[2]) {
+                console.log(`${line} is not valid`)
+                return
+            }
             for (let i = 0; i < infolist.length; i++) {
                 oldPot = String(infolist[1]).replace("old_pot:","").trim()
                 newPot = String(infolist[2]).replace("new_pot:","").trim()
@@ -36,7 +41,7 @@ module.exports = {
                 balance: balance
             })
         });
-        console.log(nodeInfo)
+    
 
         const txlist = []
         const api = await Api.getInstance().getApi();
@@ -62,8 +67,10 @@ module.exports = {
 
         console.log(colors.red(`tx hash: ${hash}`))
 
-        const democracy =  await api.tx.democracy.notePreimage(hash);
-        democracy.signAndSend(account, ({ events = [], status }) => {
+        if (isSubmit) {
+            console.log(`submitting tx...`)
+            const democracy =  await api.tx.democracy.notePreimage(hash);
+            democracy.signAndSend(account, ({ events = [], status }) => {
             console.log(`Current status is ${status.type}`);
             if (status.isFinalized) {
                 console.log(
@@ -87,6 +94,11 @@ module.exports = {
                     }
                 });
             }
-        });
+         });
+            
+        }
+
+        
+        process.exit(0);
     },
 }

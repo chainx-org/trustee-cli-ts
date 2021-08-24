@@ -6,6 +6,8 @@ SUBSCAN , old_pot: 5ShZxxtnVp8B8Nbaxz7ipPohdGZNcKVNjWffpZ8YMhDo1Zg9 , new_pot: 5
 DACH , old_pot: 5SpPdukHeDgtZrkgbuHQH6rDRyb5Bw69xxYo6sAFhpRADj6i , new_pot: 5T3Zfb5QdjohE7yXBxbCz9yDuzPrE118RuhFuYhJKWoGQdde , pot_balance: 1400439344
 OnlyWay2Live , old_pot: 5Py8CtWQQeS86ej9MarigaZ1mdQ1cywUc5gacW779wthK2cC , new_pot: 5UJfz9Tg5Zo2VEE79S2vKgpuPbze7fsWTruvHvFvdaNaPpNi , pot_balance: 969269086
 STAKENODE , old_pot: 5V7Tryg632cD6hQ46JeBRf8B4umQcvJPthe5KpedRuk33Xzj , new_pot: 5Sqp5pzUzvWnpcFhQ5jJBuCnAjJyRGM7856UdrrejSB2enYV , pot_balance: 16002285206
+
+
 ZYWIEC , old_pot: 5RooUGaAm6wqdziBcjHdZueBeUmZdGzJrJHTPA6cq7rUNSZ1 , new_pot: 5TUP3KejDyiDqCAjfGtckGHerEozup9e9cFjVv4sVkAG2JpB , pot_balance: 288373233
 LongNoded , old_pot: 5U1Mgbc7YyaPh2kzQMzsF1kfWn7c1XGDhPdU4xRXCBd7HuNX , new_pot: 5SwvB9sfvVDX7fW1o7R7uC56X33d4GiDzVKps1pBoQSW7ZLx , pot_balance: 348185386
 FirePool , old_pot: 5UXm9y5evaVmJHWMjpLDz71KH5g1wv1HmJUnA4AEyi1pEC2K , new_pot: 5RnswtsHRwAF17Pmk8oiTyqURzRfJ3Ei3RpdSQFHtMwUejA5 , pot_balance: 121755000
