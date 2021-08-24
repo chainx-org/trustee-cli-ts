@@ -12,6 +12,8 @@ $ cp .env.example .env
 
 ```
 
+
+
 ## Config
 - bitcoin_fee_rate
 
@@ -35,6 +37,16 @@ ChainX 账户私钥，用于签名并提交 ChainX 交易。
 
 ## V2.0 版本信托处理逻辑
 
+### 提交民主sudo交易
+
+* 构造交易并不提交
+```
+trustee-tools sudo 文件地址
+```
+* 构造交易提交
+```
+trustee-tools sudo 文件地址 submit
+```
 ### 一、使用脚本构造比特币提现交易并进行上链
  
  * 1. 显示当前提现列表
