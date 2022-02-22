@@ -49,6 +49,8 @@ export default class CreateToHot {
             return b.amount - a.amount
         });
 
+        console.log(unspents);
+
         const [targetInputs, minerFee] = await calcTargetUnspents(
             unspents,
             this.amount,

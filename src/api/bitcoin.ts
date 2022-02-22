@@ -1,20 +1,20 @@
 import * as memoize from 'memoizee';
+import mempoolJS from "@mempool/mempool.js";
 const fetch = require("node-fetch");
 const bitcoin = require("bitcoinjs-lib")
 
 export async function getUnspents(address, network) {
-    const net = network === "mainnet" ? "main" : "test3";
+    const net = network === "mainnet" ? "main" : "signet";
 
-    const url = `https://api.blockcypher.com/v1/btc/${net}/addrs/${address}?unspentOnly=true&confirmations=1&limit=800`;
-    const res = await fetch(url);
-    const response = await res.json();
-    if (response.error) {
-        console.error(`api error: ${response.error}`);
-        throw new Error(response.error);
-    }
-    return (response.txrefs || []).map(utxo => ({
-        txid: utxo.tx_hash,
-        vout: utxo.tx_output_n,
+    const { bitcoin: { addresses } } = mempoolJS({
+        hostname: 'mempool.space',
+        network: net
+    });
+
+    const addressTxsUtxo = await addresses.getAddressTxsUtxo({ address });
+    return addressTxsUtxo.map(utxo => ({
+        txid: utxo.txid,
+        vout: utxo.vout,
         amount: utxo.value
     }));
 }

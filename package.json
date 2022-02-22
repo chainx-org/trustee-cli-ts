@@ -36,6 +36,7 @@
     "@ledgerhq/hw-app-btc": "^5.34.1",
     "@ledgerhq/hw-transport-node-hid": "^5.34.0",
     "@ledgerhq/logs": "^5.30.0",
+    "@mempool/mempool.js": "^2.3.0",
     "@polkadot/api": "^7.9.1",
     "@polkadot/keyring": "^8.4.1",
     "@polkadot/util": "^8.4.1",
