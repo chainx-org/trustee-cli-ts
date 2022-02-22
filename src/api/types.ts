@@ -18,6 +18,7 @@ export class ChainPerties {
     ss58Format: number;
     tokenDecimals: number;
     tokenSymbol: string;
+    network: string;
     bitcoinType: string;
 }
 

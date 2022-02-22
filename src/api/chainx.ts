@@ -26,7 +26,6 @@ class Api {
         if (!process.env.chainx_ws_addr) {
             assert(true, "没有设置chainx_ws_addr")
         }
-        console.log("chainx_ws_addr:", process.env.chainx_ws_addr)
         const resigtry = new TypeRegistry();
         resigtry.setMetadata(new Metadata(resigtry, metaFile))
         const wsProvider = new WsProvider(process.env.chainx_ws_addr);
@@ -44,9 +43,7 @@ class Api {
         }
         await this.api.isReady
         const systemProperties = await this.api.rpc.system.properties();
-
-        // @ts-ignore
-        const properties = plainToClass(ChainPerties, systemProperties.toJSON());
+        const properties = plainToClass(ChainPerties, JSON.parse(JSON.stringify(systemProperties)));
         const keyring = new Keyring({type: "ed25519"});
         keyring.setSS58Format(properties.ss58Format)
         return keyring.addFromUri(process.env.chainx_private_key);
@@ -120,11 +117,7 @@ class Api {
     async getChainProperties(): Promise<ChainPerties> {
         await this.ready()
         const systemProperties = await this.api.rpc.system.properties();
-        // @ts-ignore
-        console.log(systemProperties.toJSON())
-        // @ts-ignore
-        const properties = plainToClass(ChainPerties, systemProperties.toJSON());
-        console.log(111)
+        const properties = plainToClass(ChainPerties, JSON.parse(JSON.stringify(systemProperties)));
         properties.bitcoinType = await this.getBtcNetworkState();
         return properties;
     }
