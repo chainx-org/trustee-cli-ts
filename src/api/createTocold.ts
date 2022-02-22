@@ -37,7 +37,7 @@ export default class CreateToHot {
         const coldAddr = info.coldAddress.addr;
         const required = info.threshold;
 
-        console.log(colors.yellow(`redeem script ${info.coldAddress.redeemScript.toString()}`))
+        console.log(colors.yellow(`redeem script ${info.coldAddress.redeemScript}`))
 
         const properties = await Api.getInstance().getChainProperties();
 

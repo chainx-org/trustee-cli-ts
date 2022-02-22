@@ -8,3 +8,4 @@ build
 .vscode
 .env
 yarn.lock
+.idea

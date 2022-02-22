@@ -1,11 +1,22 @@
-import { ApiPromise, WsProvider, Keyring } from "@polkadot/api"
-import { options } from "@chainx-v2/api"
-import { assert } from "console";
-import { plainToClass } from 'class-transformer'
-import { TrusteeSessionInfo, ChainPerties, WithdrawaItem, WithDrawLimit, BtcWithdrawalProposal, ValidatorProfile } from './types'
-
-const ora = require('ora');
+import {ApiPromise, Keyring, WsProvider} from "@polkadot/api"
+import {assert} from "console";
+import {plainToClass} from 'class-transformer'
+import {
+    BtcWithdrawalProposal,
+    ChainPerties,
+    TrusteeSessionInfo,
+    ValidatorProfile,
+    WithdrawaItem,
+    WithDrawLimit
+} from './types'
+// import ora from 'ora'
 require("dotenv").config();
+const fs = require('fs');
+const {TypeRegistry} = require("@polkadot/types");
+const {Metadata} = require("@polkadot/types/metadata/Metadata");
+const rpcFile = JSON.parse(fs.readFileSync('./rpc.json').toString());
+const typeFile = JSON.parse(fs.readFileSync('./types.json').toString());
+const metaFile = fs.readFileSync('./meta.txt').toString().replace(/[\r\n]/g,"");
 
 class Api {
     public api: ApiPromise;
@@ -15,8 +26,11 @@ class Api {
         if (!process.env.chainx_ws_addr) {
             assert(true, "没有设置chainx_ws_addr")
         }
+        console.log("chainx_ws_addr:", process.env.chainx_ws_addr)
+        const resigtry = new TypeRegistry();
+        resigtry.setMetadata(new Metadata(resigtry, metaFile))
         const wsProvider = new WsProvider(process.env.chainx_ws_addr);
-        this.api = new ApiPromise(options({ provider: wsProvider }));
+        this.api = new ApiPromise({rpc: rpcFile, types: typeFile, provider: wsProvider, registry: resigtry});
 
     }
 
@@ -31,11 +45,11 @@ class Api {
         await this.api.isReady
         const systemProperties = await this.api.rpc.system.properties();
 
+        // @ts-ignore
         const properties = plainToClass(ChainPerties, systemProperties.toJSON());
-        const keyring = new Keyring({ type: "ed25519" });
+        const keyring = new Keyring({type: "ed25519"});
         keyring.setSS58Format(properties.ss58Format)
-        const account = keyring.addFromUri(process.env.chainx_private_key);
-        return account;
+        return keyring.addFromUri(process.env.chainx_private_key);
     }
 
     public static getInstance() {
@@ -47,23 +61,23 @@ class Api {
     }
 
     async ready() {
-        const spinner = ora('chainx api init..').start();
+        // const spinner = ora('chainx api init..').start();
         await this.api.isReady;
-        spinner.stop();
+        // spinner.stop();
     }
 
     public async getTrusteeSessionInfo(): Promise<TrusteeSessionInfo> {
         await this.ready()
         // @ts-ignore
-        const session = await this.api.rpc.xgatewaycommon.bitcoinTrusteeSessionInfo();
-        const sessionClass = plainToClass(TrusteeSessionInfo, JSON.parse(JSON.stringify(session)))
-        return sessionClass
+        const session = await this.api.rpc.xgatewaycommon.bitcoinTrusteeSessionInfo(-1);
+        return plainToClass(TrusteeSessionInfo, JSON.parse(JSON.stringify(session)))
     }
 
     // 获取Storage中信托提现的Proposal状态
     public async getTxByReadStorage(): Promise<BtcWithdrawalProposal | null> {
         await this.ready()
-        const { parentHash } = await this.api.rpc.chain.getHeader();
+        // @ts-ignore
+        const {parentHash} = await this.api.rpc.chain.getHeader();
         const btcTxLists = await this.api.query.xGatewayBitcoin.withdrawalProposal.at(
             parentHash
         );
@@ -77,7 +91,8 @@ class Api {
     // 获取节点名称
     public async getNodeNames(accountId: string): Promise<ValidatorProfile | null> {
         await this.ready()
-        const { parentHash } = await this.api.rpc.chain.getHeader();
+        // @ts-ignore
+        const {parentHash} = await this.api.rpc.chain.getHeader();
         const validatorProfile = await this.api.query.xStaking.validators.at(
             parentHash, accountId
         );
@@ -90,7 +105,8 @@ class Api {
 
     async getBtcNetworkState() {
         await this.ready()
-        const { parentHash } = await this.api.rpc.chain.getHeader();
+        // @ts-ignore
+        const {parentHash} = await this.api.rpc.chain.getHeader();
         // @ts-ignore
         const netWorkType = await this.api.query.xGatewayBitcoin.networkId.at(parentHash);
         if (netWorkType.toString() === "Testnet") {
@@ -104,11 +120,12 @@ class Api {
     async getChainProperties(): Promise<ChainPerties> {
         await this.ready()
         const systemProperties = await this.api.rpc.system.properties();
+        // @ts-ignore
+        console.log(systemProperties.toJSON())
+        // @ts-ignore
         const properties = plainToClass(ChainPerties, systemProperties.toJSON());
-        const networkType = await this.getBtcNetworkState();
-
-        properties.bitcoinType = networkType;
-
+        console.log(111)
+        properties.bitcoinType = await this.getBtcNetworkState();
         return properties;
     }
 
@@ -139,8 +156,7 @@ class Api {
         // @ts-ignore
         const limit = await this.api.rpc.xgatewaycommon.withdrawalLimit("1");
 
-        const withdrawLimit = plainToClass(WithDrawLimit, limit.toJSON())
-        return withdrawLimit;
+        return plainToClass(WithDrawLimit, limit.toJSON());
     }
 }
 

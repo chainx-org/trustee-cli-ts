@@ -8,7 +8,10 @@ export class TrusteeSessionInfo {
     coldAddress: CodeOrAddress;
     hotAddress: CodeOrAddress;
     threshold: number;
-    trusteeList: string[];
+    trusteeList: [];
+    multiAccount: string;
+    startHeight: number;
+    endHeight: number;
 }
 
 export class ChainPerties {
