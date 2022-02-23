@@ -45,7 +45,6 @@
     "@types/memoizee": "^0.4.5",
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
-    "base-64": "^1.0.0",
     "bech32": "^2.0.0",
     "bignumber.js": "^9.0.1",
     "bitcoinjs-lib": "4.0.2",

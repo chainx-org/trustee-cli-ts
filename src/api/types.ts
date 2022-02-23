@@ -96,9 +96,12 @@ export function fromBech32ToScript(address: string): Buffer {
     return Buffer.from("5120"+fromBech32(address).data.toString("hex"), "hex");
 }
 
-export function scriptToBech32Adrress(script: Buffer): string {
+export function scriptToBech32mAdress(script: Buffer, network): string {
+    const prefix = network === "mainnet" ? "bc" : "tb";
+    const version = 1;
+
     const result = bech32.toWords(script.slice(2, 34));
-    result.unshift(1);
-    return bech32m.encode("tb", result);
+    result.unshift(version);
+    return bech32m.encode(prefix, result);
 }
 

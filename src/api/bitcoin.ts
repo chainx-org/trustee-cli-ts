@@ -1,24 +1,37 @@
 import * as memoize from 'memoizee';
 import mempoolJS from "@mempool/mempool.js";
-import {scriptToBech32Adrress} from "./types";
+import {scriptToBech32mAdress} from "./types";
+
 const fetch = require("node-fetch");
 const bitcoin = require("bitcoinjs-lib")
-const base64 = require('base-64');
 
 export async function getUnspents(address, network) {
-    const net = network === "mainnet" ? "main" : "signet";
+    const net = network === "mainnet" ? "mainnet" : "signet";
 
-    const { bitcoin: { addresses } } = mempoolJS({
-        hostname: 'mempool.space',
-        network: net
-    });
+    if (net === "mainnet") {
+        const {bitcoin: {addresses}} = mempoolJS({
+            hostname: 'mempool.space',
+        });
 
-    const addressTxsUtxo = await addresses.getAddressTxsUtxo({ address });
-    return addressTxsUtxo.map(utxo => ({
-        txid: utxo.txid,
-        vout: utxo.vout,
-        amount: utxo.value
-    }));
+        const addressTxsUtxo = await addresses.getAddressTxsUtxo({address});
+        return addressTxsUtxo.map(utxo => ({
+            txid: utxo.txid,
+            vout: utxo.vout,
+            amount: utxo.value
+        }));
+    } else {
+        const {bitcoin: {addresses}} = mempoolJS({
+            hostname: 'mempool.space',
+            network: net
+        });
+
+        const addressTxsUtxo = await addresses.getAddressTxsUtxo({address});
+        return addressTxsUtxo.map(utxo => ({
+            txid: utxo.txid,
+            vout: utxo.vout,
+            amount: utxo.value
+        }));
+    }
 }
 
 export function pickUtxos(utxos, outSum) {
@@ -35,7 +48,6 @@ export function pickUtxos(utxos, outSum) {
     if (inSum < outSum) {
         console.log(`Not enough funds to send ${outSum} satoshis.`);
         throw new Error("UTXO 不足以支付提现");
-        process.exit(1);
     }
 
     return result;
@@ -81,9 +93,9 @@ export const getInputsAndOutputsFromTx = async (tx, currentNetwork?) => {
         try {
             return bitcoin.address.fromOutputScript(script, network);
         } catch {
-            try{
-                return scriptToBech32Adrress(script);
-            }catch {
+            try {
+                return scriptToBech32mAdress(script, currentNetwork);
+            } catch {
                 return '';
             }
         }
@@ -107,7 +119,7 @@ export const getInputsAndOutputsFromTx = async (tx, currentNetwork?) => {
             value: item.value / Math.pow(10, 8),
             // @ts-ignore
             satoshi: item.value,
-            ...(address ? {} : { err: true }),
+            ...(address ? {} : {err: true}),
         };
     });
 
@@ -136,7 +148,7 @@ export const getInputsAndOutputsFromTx = async (tx, currentNetwork?) => {
                 hash: findOne.txid,
                 value: findOutputOne.value / Math.pow(10, 8),
                 satoshi: findOutputOne.value,
-                ...(address ? {} : { err: true }),
+                ...(address ? {} : {err: true}),
             };
         });
     }
@@ -159,15 +171,14 @@ export const fetchNodeTxsFromTxidList = async (ids) => {
             {
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Basic ' + base64.encode("auth:bitcoin-b2dd077"),
+                    'Authorization': `Basic YXV0aDpiaXRjb2luLWIyZGQwNzc=`,
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify(params),
             }
         );
-        const json = await response.json();
-        return json;
+        return response.json();
     });
     let res = await Promise.all(actions);
 

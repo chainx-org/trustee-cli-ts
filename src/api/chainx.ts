@@ -9,7 +9,7 @@ import {
     WithdrawaItem,
     WithDrawLimit
 } from './types'
-// import ora from 'ora'
+const ora = require('ora');
 require("dotenv").config();
 const fs = require('fs');
 const {TypeRegistry} = require("@polkadot/types");
@@ -58,9 +58,9 @@ class Api {
     }
 
     async ready() {
-        // const spinner = ora('chainx api init..').start();
+        const spinner = ora('chainx api init..').start();
         await this.api.isReady;
-        // spinner.stop();
+        spinner.stop();
     }
 
     public async getTrusteeSessionInfo(session_num): Promise<TrusteeSessionInfo> {
