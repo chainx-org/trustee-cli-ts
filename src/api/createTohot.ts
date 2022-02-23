@@ -2,10 +2,13 @@
  * 此脚本用于构造冷转热交易
  */
 
+import {fromBech32ToScript} from "./types";
+
 require("dotenv").config();
 require("console.table");
 import Api from "./chainx";
-import { getUnspents, calcTargetUnspents } from "./bitcoin";
+import {getUnspents, calcTargetUnspents} from "./bitcoin";
+
 const bitcoin = require("bitcoinjs-lib");
 const colors = require('colors')
 
@@ -14,6 +17,7 @@ export default class CreateToHot {
     public amount: number;
     public device: any;
     public deviceType: string;
+
     constructor(rawAmount: string) {
         this.amount = Math.pow(10, 8) * parseFloat(rawAmount);
     }
@@ -79,10 +83,17 @@ export default class CreateToHot {
         for (const unspent of targetInputs) {
             txb.addInput(unspent.txid, unspent.vout);
         }
-
-        txb.addOutput(hotAddr, this.amount);
+        try {
+            txb.addOutput(hotAddr, this.amount);
+        } catch (e) {
+            txb.addOutput(fromBech32ToScript(hotAddr), this.amount);
+        }
         if (change > 0) {
-            txb.addOutput(coldAddr, change);
+            try {
+                txb.addOutput(coldAddr, change);
+            } catch (e) {
+                txb.addOutput(fromBech32ToScript(coldAddr), change);
+            }
         }
 
         this.logInputs(targetInputs);

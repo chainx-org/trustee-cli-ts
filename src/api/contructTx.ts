@@ -1,8 +1,9 @@
 import Api from './chainx'
-import { getUnspents, pickUtxos, getInputsAndOutputsFromTx } from './bitcoin'
-import { remove0x, add0x } from '../utils'
-import { WithDrawLimit, WithdrawaItem } from './types';
-const { MultiSelect } = require('enquirer');
+import {getUnspents, pickUtxos, getInputsAndOutputsFromTx} from './bitcoin'
+import {remove0x, add0x} from '../utils'
+import {WithDrawLimit, WithdrawaItem, fromBech32ToScript} from './types';
+
+const {MultiSelect} = require('enquirer');
 const colors = require('colors')
 require("dotenv").config()
 require("console.table")
@@ -57,7 +58,7 @@ export default class ContstructTx {
             const address = withdraw.addr;
             const balance = Number(withdraw.balance) / Math.pow(10, 8);
             const state = withdraw.state;
-            return { address, balance, state };
+            return {address, balance, state};
         });
 
         console.table(normalizedOuts);
@@ -105,7 +106,7 @@ export default class ContstructTx {
             const address = withdraw.addr;
             const balance = Number(withdraw.balance) / Math.pow(10, 8);
             const state = withdraw.state;
-            return { address, balance, state };
+            return {address, balance, state};
         });
 
         console.table(normalizedOuts);
@@ -141,7 +142,7 @@ export default class ContstructTx {
         const info = await this.api.getTrusteeSessionInfo();
         const properties = await this.api.getChainProperties();
 
-        const { addr } = info.hotAddress;
+        const {addr} = info.hotAddress;
 
         const required = info.threshold;
         const total = info.trusteeList.length;
@@ -199,10 +200,18 @@ export default class ContstructTx {
         }
 
         for (const withdrawal of withdrawals) {
-            txb.addOutput(withdrawal.addr, withdrawal.balance - fee);
+            try {
+                txb.addOutput(withdrawal.addr, withdrawal.balance - fee);
+            } catch (e) {
+                txb.addOutput(fromBech32ToScript(withdrawal.addr), withdrawal.balance - fee);
+            }
         }
         if (change > 0) {
-            txb.addOutput(addr.toString(), change);
+            try {
+                txb.addOutput(addr.toString(), change);
+            } catch (e) {
+                txb.addOutput(fromBech32ToScript(addr.toString()), change);
+            }
         }
 
         const signed = await this.signIfRequired(txb, network);
@@ -281,14 +290,14 @@ export default class ContstructTx {
                     add0x(rawTx)
                 );
 
-                await extrinsic.signAndSend(alice, ({ events = [], status }) => {
+                await extrinsic.signAndSend(alice, ({events = [], status}) => {
                     console.log(`Current status is ${status.type}`);
                     if (status.isFinalized) {
                         console.log(
                             `Transaction included at blockHash ${status.asFinalized}`
                         );
                         // Loop through Vec<EventRecord> to display all events
-                        events.forEach(({ phase, event: { data, method, section } }) => {
+                        events.forEach(({phase, event: {data, method, section}}) => {
                             // console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
                             if (method === "ExtrinsicFailed") {
                                 console.error(colors.red(
@@ -333,6 +342,6 @@ export default class ContstructTx {
         );
 
         const all = outputs.reduce((result, out) => result + out.balance, 0);
-        console.table([{ all: all / Math.pow(10, 8) + " BTC" }]);
+        console.table([{all: all / Math.pow(10, 8) + " BTC"}]);
     }
 }
