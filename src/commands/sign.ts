@@ -43,7 +43,6 @@ module.exports = {
 
         console.log(colors.green(`当前网络类型: ${properties.bitcoinType} \n`));
         console.log(colors.green(`当前赎回脚本: ${remove0x(process.env.redeem_script)} \n`));
-
         if (selectDevice === 'trezor' || selectDevice === 'ledger') {
             try {
                 const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx, properties.bitcoinType);

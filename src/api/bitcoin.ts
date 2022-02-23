@@ -2,6 +2,7 @@ import * as memoize from 'memoizee';
 import mempoolJS from "@mempool/mempool.js";
 const fetch = require("node-fetch");
 const bitcoin = require("bitcoinjs-lib")
+const base64 = require('base-64');
 
 export async function getUnspents(address, network) {
     const net = network === "mainnet" ? "main" : "signet";
@@ -152,7 +153,7 @@ export const fetchNodeTxsFromTxidList = async (ids) => {
             {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Basic YXV0aDpiaXRjb2luLWIyZGQwNzc=`,
+                    'Authorization': 'Basic ' + base64.encode("auth:bitcoin-b2dd077"),
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
