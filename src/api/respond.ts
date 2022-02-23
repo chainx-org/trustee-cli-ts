@@ -1,7 +1,8 @@
 import Api from './chainx'
-import { remove0x, add0x, isNull } from '../utils'
-import { getInputsAndOutputsFromTx } from './bitcoin'
-import { TrusteeSessionInfo } from './types';
+import {remove0x, add0x, isNull} from '../utils'
+import {getInputsAndOutputsFromTx} from './bitcoin'
+import {TrusteeSessionInfo} from './types';
+
 require("dotenv").config();
 require("console.table");
 const bitcoin = require("bitcoinjs-lib");
@@ -47,7 +48,7 @@ export default class Respond {
             const normalizedOuts = withdrawalTx.trusteeList.map(trustee => {
                 const address = trustee[0];
                 const result = trustee[1];
-                return { ["信托地址:"]: address, ["签名结果:"]: result };
+                return {["信托地址:"]: address, ["签名结果:"]: result};
             });
 
             console.table(normalizedOuts);
@@ -85,7 +86,7 @@ export default class Respond {
         const normalizedOuts = tx.outs.map(out => {
             const address = bitcoin.address.fromOutputScript(out.script, network);
             const value = out.value / Math.pow(10, 8);
-            return { address, ["value(BTC)"]: value };
+            return {address, ["value(BTC)"]: value};
         });
 
         // TODO: 输出inputs列表，需查询比特币网络
@@ -104,11 +105,13 @@ export default class Respond {
         const tx = bitcoin.Transaction.fromHex(remove0x(rawTx));
         const txb = bitcoin.TransactionBuilder.fromTransaction(tx, network);
 
-        const keyPair = bitcoin.ECPair.fromWIF(
-            process.env.bitcoin_private_key,
-            network
+        const keyPair = bitcoin.ECPair.fromPrivateKey(
+            Buffer.from(process.env.bitcoin_private_key, "hex"),
+            {
+                compressed: true,
+                network: bitcoin.networks.bitcoin
+            }
         );
-
         try {
             for (let i = 0; i < tx.ins.length; i++) {
                 txb.sign(i, keyPair, this.redeemScript);
@@ -140,12 +143,12 @@ export default class Respond {
         );
 
         console.log(`当前提提交tx ${rawTx}`);
-        await extrinsic.signAndSend(alice, ({ events = [], status }) => {
+        await extrinsic.signAndSend(alice, ({events = [], status}) => {
             console.log(`Current status is ${status.type}`);
             if (status.isFinalized) {
                 console.log(`Transaction included at blockHash ${status.asFinalized}`);
                 // Loop through Vec<EventRecord> to display all events
-                events.forEach(({ phase, event: { data, method, section } }) => {
+                events.forEach(({phase, event: {data, method, section}}) => {
                     // console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
                     if (method === "ExtrinsicFailed") {
                         console.error(

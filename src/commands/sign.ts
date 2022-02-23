@@ -1,9 +1,10 @@
-import { GluegunToolbox } from 'gluegun'
-import { promtSelectDevice, isNull, remove0x } from '../utils'
+import {GluegunToolbox} from 'gluegun'
+import {promtSelectDevice, isNull, remove0x} from '../utils'
 import Api from "../api/chainx";
-import { getInputsAndOutputsFromTx } from '../api/bitcoin'
+import {getInputsAndOutputsFromTx} from '../api/bitcoin'
 import TrezorConnector from '../multisign/trezor'
 import Ledger from '../multisign/ledger'
+
 const bitcoin = require("bitcoinjs-lib");
 const colors = require('colors')
 
@@ -43,10 +44,9 @@ module.exports = {
         console.log(colors.green(`当前网络类型: ${properties.bitcoinType} \n`));
         console.log(colors.green(`当前赎回脚本: ${remove0x(process.env.redeem_script)} \n`));
 
-        const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx,
-            properties.bitcoinType);
         if (selectDevice === 'trezor' || selectDevice === 'ledger') {
             try {
+                const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx, properties.bitcoinType);
                 const signData = await device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(process.env.redeem_script), properties.bitcoinType);
                 console.log(colors.green(`签名成功\n`))
                 console.log(colors.red(`签名后交易原文:\n  ${JSON.stringify(signData)}`))
@@ -61,15 +61,20 @@ module.exports = {
             const tx = bitcoin.Transaction.fromHex(remove0x(rawTx));
             const txb = bitcoin.TransactionBuilder.fromTransaction(tx, bitcoin.networks.bitcoin);
 
-            const keyPair = bitcoin.ECPair.fromWIF(
-                process.env.bitcoin_private_key,
-                bitcoin.networks.bitcoin
+            const keyPair = bitcoin.ECPair.fromPrivateKey(
+                Buffer.from(process.env.bitcoin_private_key, "hex"),
+                {
+                    compressed: true,
+                    network: bitcoin.networks.bitcoin
+                }
             );
             const redeemScript = Buffer.from(remove0x(process.env.redeem_script), "hex");
             try {
                 for (let i = 0; i < tx.ins.length; i++) {
                     txb.sign(i, keyPair, redeemScript);
                 }
+                console.log(colors.green(`签名成功\n`))
+                console.log(colors.red(`签名后交易原文:\n  ${txb.build().toHex()}`))
             } catch (e) {
                 console.error("签名出错：", e);
                 process.exit(1);

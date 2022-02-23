@@ -18,8 +18,7 @@
     "test": "jest",
     "watch": "jest --watch",
     "snapupdate": "jest --updateSnapshot",
-    "coverage": "jest --coverage",
-    "tt": "./bin/trustee-tools tocold 0.1"
+    "coverage": "jest --coverage"
   },
   "files": [
     "tsconfig.json",

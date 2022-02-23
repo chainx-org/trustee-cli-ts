@@ -257,9 +257,12 @@ export default class ContstructTx {
                 console.error("没有设置bitcoin_private_key");
                 process.exit(1);
             }
-            const keyPair = bitcoin.ECPair.fromWIF(
-                process.env.bitcoin_private_key,
-                network
+            const keyPair = bitcoin.ECPair.fromPrivateKey(
+                Buffer.from(process.env.bitcoin_private_key, "hex"),
+                {
+                    compressed: true,
+                    network: bitcoin.networks.bitcoin
+                }
             );
             for (let i = 0; i < txb.__inputs.length; i++) {
                 txb.sign(i, keyPair, redeemScript);
