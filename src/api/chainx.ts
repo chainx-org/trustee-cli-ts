@@ -63,10 +63,10 @@ class Api {
         // spinner.stop();
     }
 
-    public async getTrusteeSessionInfo(): Promise<TrusteeSessionInfo> {
+    public async getTrusteeSessionInfo(session_num): Promise<TrusteeSessionInfo> {
         await this.ready()
         // @ts-ignore
-        const session = await this.api.rpc.xgatewaycommon.bitcoinTrusteeSessionInfo(-1);
+        const session = await this.api.rpc.xgatewaycommon.bitcoinTrusteeSessionInfo(session_num);
         return plainToClass(TrusteeSessionInfo, JSON.parse(JSON.stringify(session)))
     }
 

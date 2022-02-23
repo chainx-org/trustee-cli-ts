@@ -24,7 +24,7 @@ export default class Respond {
     }
 
     async init(device: any, deviceType: string) {
-        const info = await this.api.getTrusteeSessionInfo();
+        const info = await this.api.getTrusteeSessionInfo(-1);
         this.trusteeSessonInfo = info;
         this.redeemScript = Buffer.from(
             remove0x(info.hotAddress.redeemScript.toString()),

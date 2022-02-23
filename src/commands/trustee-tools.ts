@@ -11,7 +11,7 @@ const command: GluegunCommand = {
     const colors = require('colors');
 
     const api = Api.getInstance();
-    const session: TrusteeSessionInfo = await api.getTrusteeSessionInfo()
+    const session: TrusteeSessionInfo = await api.getTrusteeSessionInfo(-1)
     console.log(colors.red(session.trusteeList))
     print.info('Welcome to Trustee-Tools CLI')
     process.exit(0)

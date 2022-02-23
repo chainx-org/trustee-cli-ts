@@ -12,6 +12,7 @@ import {getUnspents, calcTargetUnspents} from "./bitcoin";
 const bitcoin = require("bitcoinjs-lib");
 const colors = require('colors')
 
+
 export default class CreateToHot {
     public amount: number;
     public device: any;
@@ -21,12 +22,7 @@ export default class CreateToHot {
         this.amount = Math.pow(10, 8) * parseFloat(rawAmount);
     }
 
-    async init(device: any, deviceType: string) {
-        this.device = device;
-        this.deviceType = deviceType;
-    }
-
-    async contructToCold() {
+    async contructToHot() {
         if (!process.env.bitcoin_fee_rate) {
             throw new Error("bitcoin_fee_rate 没有设置");
             process.exit(1);
@@ -36,24 +32,28 @@ export default class CreateToHot {
             throw new Error("min_change 没有设置");
             process.exit(1);
         }
-        const info = await Api.getInstance().getTrusteeSessionInfo(-1);
-        const hotAddr = info.hotAddress.addr;
+        const info = await Api.getInstance().getTrusteeSessionInfo(-2);
+        const nextInfo = await Api.getInstance().getTrusteeSessionInfo(-1);
         const coldAddr = info.coldAddress.addr;
+        const nextColdAddr = nextInfo.coldAddress.addr;
         const required = info.threshold;
 
-        console.log(colors.yellow(`redeem script ${info.coldAddress.redeemScript}`))
+        // const redeemScript = Buffer.from(
+        //     remove0x(info.coldAddress.redeemScript.toString()),
+        //     "hex"
+        // );
+
+        console.log(colors.yellow(`redeem script ${info.coldAddress.redeemScript.toString()}`))
 
         const properties = await Api.getInstance().getChainProperties();
 
         const total = info.trusteeList.length;
         console.log(`bitcoin type ${properties.bitcoinType}`)
 
-        const unspents = await getUnspents(hotAddr, properties.bitcoinType);
+        const unspents = await getUnspents(coldAddr, properties.bitcoinType);
         unspents.sort((a, b) => {
             return b.amount - a.amount
         });
-
-        console.log(unspents);
 
         const [targetInputs, minerFee] = await calcTargetUnspents(
             unspents,
@@ -84,25 +84,21 @@ export default class CreateToHot {
             txb.addInput(unspent.txid, unspent.vout);
         }
         try {
-            txb.addOutput(coldAddr, this.amount);
+            txb.addOutput(nextColdAddr, this.amount);
         } catch (e) {
-            txb.addOutput(fromBech32ToScript(coldAddr), this.amount);
+            txb.addOutput(fromBech32ToScript(nextColdAddr), this.amount);
         }
         if (change > 0) {
-            try {
-                txb.addOutput(hotAddr, change);
-            } catch (e) {
-                txb.addOutput(fromBech32ToScript(hotAddr), change);
-            }
+            throw new Error("输入没有完全花费，存在找零 ！！！");
         }
 
         this.logInputs(targetInputs);
 
         const rawTx = txb.buildIncomplete().toHex();
-        console.log("未签原始交易原文:");
+        console.log("未签原始交易:\n");
         console.log(colors.green(rawTx));
+        process.exit(0);
 
-        process.exit(0)
     }
 
     logMinerFee(minerFee) {
@@ -119,6 +115,5 @@ export default class CreateToHot {
             }))
         );
     }
-
 
 }
