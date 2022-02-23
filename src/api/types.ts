@@ -96,3 +96,8 @@ export function fromBech32ToScript(address: string): Buffer {
     return Buffer.from("5120"+fromBech32(address).data.toString("hex"), "hex");
 }
 
+export function scriptToBech32Adrress(script: Buffer): string {
+    const result = bech32.toWords(script.slice(2, 34));
+    return bech32m.encode("tb", result);
+}
+

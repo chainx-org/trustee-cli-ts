@@ -1,5 +1,6 @@
 import * as memoize from 'memoizee';
 import mempoolJS from "@mempool/mempool.js";
+import {scriptToBech32Adrress} from "./types";
 const fetch = require("node-fetch");
 const bitcoin = require("bitcoinjs-lib")
 const base64 = require('base-64');
@@ -79,7 +80,11 @@ export const getInputsAndOutputsFromTx = async (tx, currentNetwork?) => {
         try {
             return bitcoin.address.fromOutputScript(script, network);
         } catch {
-            return '';
+            try{
+                return scriptToBech32Adrress(script);
+            }catch {
+                return '';
+            }
         }
     };
 
@@ -128,7 +133,7 @@ export const getInputsAndOutputsFromTx = async (tx, currentNetwork?) => {
                 raw: findOne.raw,
                 address,
                 hash: findOne.txid,
-                value: findOutputOne / Math.pow(10, 8),
+                value: findOutputOne.value / Math.pow(10, 8),
                 satoshi: findOutputOne.value,
                 ...(address ? {} : { err: true }),
             };
