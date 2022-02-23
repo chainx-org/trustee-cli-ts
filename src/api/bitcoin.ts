@@ -33,6 +33,7 @@ export function pickUtxos(utxos, outSum) {
     }
 
     if (inSum < outSum) {
+        console.log(`Not enough funds to send ${outSum} satoshis.`);
         throw new Error("UTXO 不足以支付提现");
         process.exit(1);
     }

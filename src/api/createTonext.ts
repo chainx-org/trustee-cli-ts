@@ -14,13 +14,8 @@ const colors = require('colors')
 
 
 export default class CreateToHot {
-    public amount: number;
     public device: any;
     public deviceType: string;
-
-    constructor(rawAmount: string) {
-        this.amount = Math.pow(10, 8) * parseFloat(rawAmount);
-    }
 
     async contructToHot() {
         if (!process.env.bitcoin_fee_rate) {
@@ -54,10 +49,25 @@ export default class CreateToHot {
         unspents.sort((a, b) => {
             return b.amount - a.amount
         });
+        
+        let amount = 0;
+        unspents.forEach(item => { amount += item.amount });
+
+        let bytes =
+            unspents.length * (48 + 73 * required + 34 * total) +
+            34 * 2 +
+            14;
+
+        let preMinerFee = parseInt(
+            // @ts-ignore
+            (Number(process.env.bitcoin_fee_rate) * bytes) / 1000, 10
+        );
+
+        amount = amount - preMinerFee;
 
         const [targetInputs, minerFee] = await calcTargetUnspents(
             unspents,
-            this.amount,
+            amount,
             process.env.bitcoin_fee_rate,
             required,
             total
@@ -66,7 +76,7 @@ export default class CreateToHot {
         const inputSum = targetInputs.reduce((sum, input) => sum + input.amount, 0);
 
         // @ts-ignore
-        let change = inputSum - this.amount - minerFee;
+        let change = inputSum - amount - minerFee;
         if (change < Number(process.env.min_change)) {
             change = 0;
         }
@@ -84,9 +94,9 @@ export default class CreateToHot {
             txb.addInput(unspent.txid, unspent.vout);
         }
         try {
-            txb.addOutput(nextColdAddr, this.amount);
+            txb.addOutput(nextColdAddr, amount);
         } catch (e) {
-            txb.addOutput(fromBech32ToScript(nextColdAddr), this.amount);
+            txb.addOutput(fromBech32ToScript(nextColdAddr), amount);
         }
         if (change > 0) {
             throw new Error("输入没有完全花费，存在找零 ！！！");

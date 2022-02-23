@@ -12,14 +12,7 @@ module.exports = {
             parameters
         } = toolbox
 
-        let amount: string = parameters.first;
-
-        if (isNull(amount)) {
-            console.log(colors.yellow('请输入金额\n'))
-            process.exit(0)
-        }
-        const createToHot = new CreateTohot(amount)
+        const createToHot = new CreateTohot()
         await createToHot.contructToHot();
-
     },
 }
