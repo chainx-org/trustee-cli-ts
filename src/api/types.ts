@@ -98,6 +98,7 @@ export function fromBech32ToScript(address: string): Buffer {
 
 export function scriptToBech32Adrress(script: Buffer): string {
     const result = bech32.toWords(script.slice(2, 34));
+    result.unshift(1);
     return bech32m.encode("tb", result);
 }
 
