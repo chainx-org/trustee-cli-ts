@@ -13,19 +13,17 @@ const bitcoin = require("bitcoinjs-lib");
 const colors = require('colors')
 
 
-export default class CreateToHot {
+export default class CreateToNext {
     public device: any;
     public deviceType: string;
 
-    async contructToHot() {
+    async contructToNext() {
         if (!process.env.bitcoin_fee_rate) {
             throw new Error("bitcoin_fee_rate 没有设置");
-            process.exit(1);
         }
 
         if (!process.env.min_change) {
             throw new Error("min_change 没有设置");
-            process.exit(1);
         }
         const info = await Api.getInstance().getTrusteeSessionInfo(-2);
         const nextInfo = await Api.getInstance().getTrusteeSessionInfo(-1);
@@ -49,7 +47,7 @@ export default class CreateToHot {
         unspents.sort((a, b) => {
             return b.amount - a.amount
         });
-        
+
         let amount = 0;
         unspents.forEach(item => { amount += item.amount });
 
@@ -64,7 +62,10 @@ export default class CreateToHot {
         );
 
         amount = amount - preMinerFee;
-
+        if (amount < 0) {
+            console.log(`Not enough funds to send next.`);
+            throw new Error("UTXO 不足以支付");
+        }
         const [targetInputs, minerFee] = await calcTargetUnspents(
             unspents,
             amount,

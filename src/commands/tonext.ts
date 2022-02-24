@@ -1,6 +1,6 @@
 import { GluegunToolbox } from 'gluegun'
-import CreateTohot from '../api/createTonext'
 import { isNull } from '../utils'
+import CreateToNext from "../api/createTonext";
 
 const colors = require('colors')
 
@@ -12,7 +12,7 @@ module.exports = {
             parameters
         } = toolbox
 
-        const createToHot = new CreateTohot()
-        await createToHot.contructToHot();
+        const createToNext = new CreateToNext()
+        await createToNext.contructToNext();
     },
 }

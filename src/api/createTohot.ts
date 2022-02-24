@@ -26,12 +26,10 @@ export default class CreateToHot {
     async contructToHot() {
         if (!process.env.bitcoin_fee_rate) {
             throw new Error("bitcoin_fee_rate 没有设置");
-            process.exit(1);
         }
 
         if (!process.env.min_change) {
             throw new Error("min_change 没有设置");
-            process.exit(1);
         }
         const info = await Api.getInstance().getTrusteeSessionInfo(-1);
         const hotAddr = info.hotAddress.addr;
@@ -67,6 +65,10 @@ export default class CreateToHot {
 
         // @ts-ignore
         let change = inputSum - this.amount - minerFee;
+        if (change < 0) {
+            console.log(`Not enough funds to send ${this.amount} satoshis.`);
+            throw new Error("UTXO 不足以支付");
+        }
         if (change < Number(process.env.min_change)) {
             change = 0;
         }
