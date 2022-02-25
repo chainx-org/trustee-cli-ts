@@ -14,9 +14,9 @@ require("dotenv").config();
 const fs = require('fs');
 const {TypeRegistry} = require("@polkadot/types");
 const {Metadata} = require("@polkadot/types/metadata/Metadata");
-const rpcFile = JSON.parse(fs.readFileSync('./rpc.json').toString());
-const typeFile = JSON.parse(fs.readFileSync('./types.json').toString());
-const metaFile = fs.readFileSync('./meta.txt').toString().replace(/[\r\n]/g,"");
+const rpcFile = JSON.parse(fs.readFileSync('./res/rpc.json').toString());
+const typeFile = JSON.parse(fs.readFileSync('./res/types.json').toString());
+const metadata = fs.readFileSync('./res/metadata.txt').toString().replace(/[\r\n]/g,"");
 
 class Api {
     public api: ApiPromise;
@@ -26,11 +26,10 @@ class Api {
         if (!process.env.chainx_ws_addr) {
             assert(true, "没有设置chainx_ws_addr")
         }
-        const resigtry = new TypeRegistry();
-        resigtry.setMetadata(new Metadata(resigtry, metaFile))
         const wsProvider = new WsProvider(process.env.chainx_ws_addr);
+        const resigtry = new TypeRegistry();
+        resigtry.setMetadata(new Metadata(resigtry, metadata))
         this.api = new ApiPromise({rpc: rpcFile, types: typeFile, provider: wsProvider, registry: resigtry});
-
     }
 
     public getApi(): ApiPromise {
@@ -63,6 +62,7 @@ class Api {
         spinner.stop();
     }
 
+    // tslint:disable-next-line:variable-name
     public async getTrusteeSessionInfo(session_num): Promise<TrusteeSessionInfo> {
         await this.ready()
         // @ts-ignore
