@@ -13,7 +13,6 @@ $ cp .env.example .env
 ```
 
 
-
 ## Config
 - bitcoin_fee_rate
 
@@ -29,71 +28,34 @@ ChainX websocket 链接地址。
 
 - bitcoin_private_key
 
-比特币私钥（目前只之前 WIF 格式），建议只在离线环境下配置该项。
+比特币私钥（256位），建议只在离线环境下配置该项。
 
 - chainx_private_key
 
 ChainX 账户私钥，用于签名并提交 ChainX 交易。
 
-## V2.0 版本信托处理逻辑
+## V4.0 版本信托处理逻辑
 
-### 提交民主sudo交易
-
-* 构造交易并不提交
-```
-trustee-tools sudo 文件地址
-```
-* 构造交易提交
-```
-trustee-tools sudo 文件地址 submit
-```
-### 一、使用脚本构造比特币提现交易并进行上链
- 
- * 1. 显示当前提现列表
-    ```
-    trustee-tools list
-    
-    ```
- * 2. 显示当前代签原文
-   ```
-    trustee-tools tx
-   ```
- * 3. 构造代签原文
-   ```
-     trustee-tools create submit
-   ```
- * 4. 响应代签原文
- 
-   * 使用硬件钱包(ledger或trezor)进行签名并提交上链 
-   ```
-   trustee-tools respond signHardware submit
-   ```  
-   * 使用比特币私钥进行签名并提交上链
-   ```
-    trustee-tools respond submit
-   ```
-
-### 三、 复制签名后的交易原文提交上链
-
-```
-trustee-tools submit 0x000......   
-```
-
-### 否决签名
-
-```
-trustee-tools submit null   
-```
+### 信托交易
 
 ## 热转冷
 ```
+// 构造热钱包转冷钱包交易，需要使用热地址私钥进行签名
 trustee-tools  tohot  要转的btc数量
 ```
 
 ## 冷转热
 
 ```
+// 构造冷钱包转热钱包交易，需要使用冷地址私钥或硬件钱包签名
 trustee-tools  tocold  要转的btc数量
+```
+
+## 换届交易
+
+```
+// 构造换届交易原文，需要使用冷地址私钥或硬件钱包签名
+trustee-tools tonext
 ```
 
 ## 使用硬件钱包或者私钥进行签名
@@ -101,8 +63,12 @@ trustee-tools  tocold  要转的btc数量
 1. 配置.env中的redeem_script赎回脚本
 
 ```
+// 对交易原文进行签名
 trustee-tools  sign 代签原文
+// 选择签名方式：["trezor", "ledger", "privateKey"]
+privateKey
 ```
+
 # License
 
 MIT - see LICENSE
