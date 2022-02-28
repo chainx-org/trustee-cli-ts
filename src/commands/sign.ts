@@ -43,10 +43,9 @@ module.exports = {
 
         console.log(colors.green(`当前网络类型: ${properties.bitcoinType} \n`));
         console.log(colors.green(`当前赎回脚本: ${remove0x(process.env.redeem_script)} \n`));
-        const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx, properties.bitcoinType);
-        console.log(inputAndOutPutResult)
         if (selectDevice === 'trezor' || selectDevice === 'ledger') {
             try {
+                const inputAndOutPutResult = await getInputsAndOutputsFromTx(rawTx, properties.bitcoinType);
                 const signData = await device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(process.env.redeem_script), properties.bitcoinType);
                 console.log(colors.green(`签名成功\n`))
                 console.log(colors.red(`签名后交易原文:\n  ${JSON.stringify(signData)}`))

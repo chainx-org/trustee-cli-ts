@@ -60,7 +60,7 @@ trustee-tools tonext
 
 ## 使用硬件钱包或者私钥进行签名
 
-1. 配置.env中的redeem_script赎回脚本
+1. 配置.env中的redeem_script赎回脚本, 然后签名
 
 ```
 // 对交易原文进行签名
