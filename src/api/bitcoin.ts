@@ -69,6 +69,7 @@ export async function calcTargetUnspents(utxos, amount, feeRate, required, total
         minerFee = (Number(process.env.bitcoin_fee_rate) * bytes) / 1000;
     }
 
+
     return [targetInputs, minerFee];
 }
 

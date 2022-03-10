@@ -51,7 +51,7 @@ export default class CreateToHot {
             return b.amount - a.amount
         });
 
-        const [targetInputs, minerFee] = await calcTargetUnspents(
+        let [targetInputs, minerFee] = await calcTargetUnspents(
             unspents,
             this.amount,
             process.env.bitcoin_fee_rate,
@@ -60,6 +60,13 @@ export default class CreateToHot {
         );
         // @ts-ignore
         const inputSum = targetInputs.reduce((sum, input) => sum + input.amount, 0);
+
+         // 尝试对交易原文进行限制
+         if (!minerFee) {
+            throw new Error("手续费计算错误");
+        } else {
+            minerFee = parseInt(parseFloat(minerFee.toString()).toFixed(0));
+        }
 
         // @ts-ignore
         let change = inputSum - this.amount - minerFee;

@@ -28,6 +28,8 @@ export default class CreateToHot {
             process.exit(1);
         }
 
+        console.log(colors.yellow(`amount ${this.amount}`))
+
         if (!process.env.min_change) {
             throw new Error("min_change 没有设置");
             process.exit(1);
@@ -46,10 +48,10 @@ export default class CreateToHot {
 
         const unspents = await getUnspents(hotAddr, properties.bitcoinType);
         unspents.sort((a, b) => {
-            return b.amount - a.amount
+            return b.amount > a.amount
         });
 
-        const [targetInputs, minerFee] = await calcTargetUnspents(
+        let [targetInputs, minerFee] = await calcTargetUnspents(
             unspents,
             this.amount,
             process.env.bitcoin_fee_rate,
@@ -58,9 +60,17 @@ export default class CreateToHot {
         );
         // @ts-ignore
         const inputSum = targetInputs.reduce((sum, input) => sum + input.amount, 0);
-
+ 
+        // 尝试对交易原文进行限制
+        if (!minerFee) {
+            throw new Error("手续费计算错误");
+        } else {
+            minerFee = parseInt(parseFloat(minerFee.toString()).toFixed(0));
+        }
         // @ts-ignore
         let change = inputSum - this.amount - minerFee;
+
+        console.log(`inputSum ${inputSum} amount ${this.amount} minerFee ${minerFee}`);
         if (change < Number(process.env.min_change)) {
             change = 0;
         }
@@ -80,6 +90,7 @@ export default class CreateToHot {
 
         txb.addOutput(coldAddr, this.amount);
         if (change > 0) {
+            console.log(`hotAddr ${hotAddr} change ${change} BTC`);
             txb.addOutput(hotAddr, change);
         }
 
