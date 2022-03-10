@@ -148,7 +148,7 @@ export const fetchNodeTxsFromTxidList = async (ids) => {
             params: [id]
         }
         const response = await fetch(
-            'https://btc.chainx.org',
+            'http://115.29.163.193:8332',
             {
                 method: 'POST',
                 headers: {
