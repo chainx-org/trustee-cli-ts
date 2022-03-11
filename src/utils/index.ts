@@ -37,3 +37,7 @@ export const promtSelectDevice = async () => {
 
     return device;
 }
+
+export function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

@@ -1,6 +1,9 @@
+import { time } from 'console';
 import * as memoize from 'memoizee';
+import { sleep } from '../utils';
 const fetch = require("node-fetch");
 const bitcoin = require("bitcoinjs-lib")
+const utils = require('../utils')
 
 export async function getUnspents(address, network) {
     const net = network === "mainnet" ? "main" : "test3";
@@ -160,14 +163,29 @@ export const fetchNodeTxsFromTxidList = async (ids) => {
                 body: JSON.stringify(params),
             }
         );
+        if (response.status !== 200) {
+            console.log(`请求参数params: ${JSON.stringify(params)}  请求id:${id} 
+             response响应状态码：${response.status}`);
+        }
         const json = await response.json();
+       
         return json;
     });
-    let res = await Promise.all(actions);
+    let rawTxs = []
 
+    let index = 1;
+    for (let action of actions) {
+        const result = await action;
+        // 等待两秒
+        await sleep(50)
+        console.log(`当前第 ${index++} 个rawtx请求，总计 ${actions.length} 个`);
+        if (result && result.result) {
+            rawTxs.push(result);
+        }
+    }
 
-    if (res && res.length) {
-        return res.map((item, index) => ({
+    if (rawTxs && rawTxs.length) {
+        return rawTxs.map((item, index) => ({
             txid: ids[index],
             // @ts-ignore
             raw: item.result,

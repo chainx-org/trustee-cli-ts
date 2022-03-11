@@ -3,6 +3,7 @@ import TransportNodeHid from "@ledgerhq/hw-transport-node-hid";
 const AppBtc = require("@ledgerhq/hw-app-btc").default;
 import { compressPublicKey } from '@ledgerhq/hw-app-btc/lib/compressPublicKey';
 const bitcoinjs = require("bitcoinjs-lib");
+const colors = require('colors')
 const { getRedeemScriptFromRaw } = require("./bitcoin-utils");
 
 const bitcore = require("bitcore-lib");
@@ -137,12 +138,16 @@ class Ledger {
         const path = this.network === "mainnet" ? mainnetPath : testnetPath;
         const paths = toSignInputs.map(() => path);
 
+        console.log(colors.green(`调用ledger签名，可能耗时较久，path路径：${path}`))
         const result = await this.appBtc.signP2SHTransaction({
             inputs: toSignInputs,
             associatedKeysets: paths,
             outputScriptHex: outputScript
+        }).catch(err => {
+            console.log(colors.red(`签名失败，失败信息：${err}`));
+            throw new Error(err);
         });
-
+        console.log(colors.green(`成功获取签名result，result：${result}`))
 
         const signatureObjs = result.map(function (sig, index) {
             return {
