@@ -29,7 +29,8 @@ module.exports = {
             const trezor = new TrezorConnector();
             await trezor.init()
             device = trezor;
-            console.log("trezro 连接状态:" + trezor.isConnected())
+            console.log("trezro 连接状态:" + trezor.getPublicKey())
+            return
         } else if (selectDevice === 'ledger') {
             const ledger = new Ledger('mainnet')
             await ledger.init();
@@ -48,7 +49,7 @@ module.exports = {
 
         if (selectDevice === 'trezor' || selectDevice === 'ledger') {
             try {
-                console.log(colors.green(`正在使用${selectDevice}签名....,耗时约几分钟，请耐心等待 ledger 数据并确认...`))
+                console.log(colors.green(`正在使用${selectDevice}签名....,耗时约几分钟，请耐心等待${selectDevice}数据并确认...`))
                 const signData = await device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(process.env.redeem_script), properties.bitcoinType);
                 console.log(colors.green(`签名成功\n`))
                 console.log(colors.red(`签名后交易原文:\n  ${JSON.stringify(signData)}`))

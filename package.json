@@ -62,7 +62,7 @@
     "memoizee": "^0.4.14",
     "node-fetch": "^2.6.1",
     "ora": "^5.1.0",
-    "trezor.js": "git+https://github.com/chainpool/trezor.js.git#electron"
+    "trezor-connect": "^8.2.7-extended"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",

@@ -1,6 +1,12 @@
+import console = require("console");
+
 const reverse = require("buffer-reverse");
 const EventEmitter = require("events");
-const trezor = require("trezor.js");
+var TrezorConnect = require('trezor-connect').default;
+var DEVICE_EVENT = require('trezor-connect').DEVICE_EVENT;
+var UI_EVENT =require('trezor-connect').UI_EVENT;
+var DEVICE = require('trezor-connect').DEVICE;
+var UI = require('trezor-connect').UI;
 const bitcoin = require("bitcoinjs-lib-zcash");
 const bs58check = require("bs58check");
 const { getPubKeysFromRedeemScript, getRedeemScriptFromRaw } = require("./bitcoin-utils");
@@ -173,49 +179,66 @@ function constructPreTxs(inputsArr) {
         .map(bjsTx2refTx);
 }
 
-class TrezorConnector extends EventEmitter {
+class Trezor  {
 
     public list: any;
     public device: any;
-    constructor() {
-        super();
-        this.list = new trezor.DeviceList({ debug: false });
-    }
+    // constructor() {
+    //     this.list = TrezorConnect.manifest.getDevices();
+    //     console.log(`trezor device list: ${this.list}`);
+    // }
 
     async init() {
-
         const spinner = ora('trezor connect init..').start();
-        return new Promise((resolve) => {
-            this.list.on("connect", device => {
-                // FIXME: 这里没有考虑多个设备的情况
-
-                this.device = device;
-                spinner.stop();
-                resolve(device);
-                device.on("disconnect", () => {
-                    this.device.removeAllListeners();
-                    this.device = null;
-                    this.emit("disconnect");
-                });
-
-                device.on("button", code => {
-                    console.log('press trezor button!')
-                    this.emit("button", code);
-                });
-
-                device.on("pin", this.pinCallback);
-            });
-
+        await TrezorConnect.init({
+            connectSrc: 'https://localhost:8088/',
+            lazyLoad: false, // this param will prevent iframe injection until TrezorConnect.method will be called
+            manifest: {
+                email: 'qinghuan@coming.chat',
+                appUrl: 'http://coming.chat'
+            },
+            popup: true
         })
+        const features = await TrezorConnect.getFeatures();
 
+        console.log(features);
+        
     }
 
-    isConnected() {
-        return !!this.device;
-    }
+    // async init() {
+
+    //     const spinner = ora('trezor connect init..').start();
+    //     return new Promise((resolve) => {
+    //         this.list.on("connect", device => {
+    //             // FIXME: 这里没有考虑多个设备的情况
+
+    //             this.device = device;
+    //             spinner.stop();
+    //             resolve(device);
+    //             device.on("disconnect", () => {
+    //                 this.device.removeAllListeners();
+    //                 this.device = null;
+    //                 this.emit("disconnect");
+    //             });
+
+    //             device.on("button", code => {
+    //                 console.log('press trezor button!')
+    //                 this.emit("button", code);
+    //             });
+
+    //             device.on("pin", this.pinCallback);
+    //         });
+
+    //     })
+
+    // }
+
+    // isConnected() {
+    //     return !!this.device;
+    // }
 
 
-    pinCallback(type, callback) {
+    pinCallback(callback) {
         console.log('Please enter PIN. The positions:');
         console.log('7 8 9');
         console.log('4 5 6');
@@ -235,18 +258,32 @@ class TrezorConnector extends EventEmitter {
     }
 
     async getDeviceXpub(network = "mainnet") {
-        const coin = network === "mainnet" ? "bitcoin" : "testnet";
-        const path = network === "mainnet" ? mainnetPath : testnetPath;
-        const result = await this.device.waitForSessionAndRun(function (session) {
-            return session.getPublicKey(path, coin);
-        });
+        // const coin = network === "mainnet" ? "bitcoin" : "testnet";
+        // const path = network === "mainnet" ? mainnetPath : testnetPath;
+        // const result = await this.device.waitForSessionAndRun(function (session) {
+        //     return session.getPublicKey(path, coin);
+        // });
 
-        return [result.message.node.public_key, result.message.xpub];
+        const res = await TrezorConnect.getPublicKey({
+            path: "m/49'/0'/0'/0/0",
+            coin: "btc"
+       })   
+       console.log(`trezor getPublicKey res: ${JSON.stringify(res)}`);
+       return res.payload.xpub;
+
+       // return [result.message.node.public_key, result.message.xpub];
     }
 
     async getPublicKey(network = "mainnet") {
-        const [pubKey] = await this.getDeviceXpub(network);
-        return pubKey;
+        // const [pubKey] = await this.getDeviceXpub(network);
+        // return pubKey;
+
+       const res = await TrezorConnect.getPublicKey({
+            path: "m/49'/0'/0'",
+            coin: "btc"
+       })   
+       console.log(`trezor getPublicKey res: ${res}`);
+       return res.payload.xpub;
     }
 
     async sign(raw, inputsArr, redeemScript, network = "mainnet") {
@@ -272,6 +309,10 @@ class TrezorConnector extends EventEmitter {
 
         const txs = constructPreTxs(inputsArr);
 
+        console.log(`trezor sign inputs: ${JSON.stringify(inputs)}`);
+        console.log(`trezor sign outputs: ${JSON.stringify(outputs)}`);
+        console.log(`trezor sign txs: ${JSON.stringify(txs)}`);
+
         const signResult = await this.device.waitForSessionAndRun(function (
             session
         ) {
@@ -288,4 +329,4 @@ class TrezorConnector extends EventEmitter {
 }
 
 
-export default TrezorConnector
+export default Trezor
