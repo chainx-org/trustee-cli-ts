@@ -55,9 +55,9 @@ class Api {
     public async getTrusteeSessionInfo(): Promise<TrusteeSessionInfo> {
         await this.ready()
         // @ts-ignore
-        const session = await this.api.rpc.xgatewaycommon.bitcoinTrusteeSessionInfo();
-        const sessionClass = plainToClass(TrusteeSessionInfo, JSON.parse(JSON.stringify(session)))
-        return sessionClass
+        const sessionInfo = await this.api.rpc.xgatewaycommon.bitcoinTrusteeSessionInfo();
+        //const sessionClass = plainToClass(TrusteeSessionInfo, JSON.parse(JSON.stringify(session)))
+        return sessionInfo
     }
 
     // 获取Storage中信托提现的Proposal状态
@@ -104,12 +104,16 @@ class Api {
     async getChainProperties(): Promise<ChainPerties> {
         await this.ready()
         const systemProperties = await this.api.rpc.system.properties();
-        const properties = plainToClass(ChainPerties, systemProperties.toJSON());
-        const networkType = await this.getBtcNetworkState();
+            //  const properties = plainToClass(ChainPerties, systemProperties.toJSON());
+        //const networkType = await this.getBtcNetworkState();
 
-        properties.bitcoinType = networkType;
-
-        return properties;
+        //properties.bitcoinType = networkType;
+        return {
+            ss58Format: 44,
+            bitcoinType: "mainnet",
+            tokenDecimals:18,
+            tokenSymbol:'PCX'
+        };
     }
 
     async getBTCWithdrawList(): Promise<WithdrawaItem[]> {
