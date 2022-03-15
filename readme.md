@@ -12,8 +12,6 @@ $ cp .env.example .env
 
 ```
 
-
-
 ## Config
 - bitcoin_fee_rate
 
