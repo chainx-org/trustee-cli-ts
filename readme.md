@@ -3,6 +3,30 @@
 A CLI for trustee-tools.
 
 
+
+## 版本更新重要！
+因chainx升级和trezor旧版本升级，现在需要对脚本进行升级
+
+```
+rm -rf node_modules
+rm -rf yarn.lock
+yarn 
+```
+### 冷钱包转热钱包
+
+碎utxo较多，因此需要分割下，先构造一笔 3 btc的热转冷
+```
+./bin/trustee-tools tocold 3
+```
+### Trezor 用户离线签名
+下载桌面版签名钱包，trezor 最新版本的库不支持nodejs环境，因此需要用桌面端签名：
+
+
+### Ledger 用户离线签名
+和以前一致
+
+
+
 ## Init Environment
 
 ```shell
