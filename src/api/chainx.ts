@@ -57,7 +57,6 @@ class Api {
         // @ts-ignore
         const sessionInfo = await this.api.rpc.xgatewaycommon.bitcoinTrusteeSessionInfo();
         const sessionClass = plainToClass(TrusteeSessionInfo, JSON.parse(JSON.stringify(sessionInfo)))
-        console.log(JSON.stringify(sessionClass))
         return sessionClass
     }
 
