@@ -56,8 +56,9 @@ class Api {
         await this.ready()
         // @ts-ignore
         const sessionInfo = await this.api.rpc.xgatewaycommon.bitcoinTrusteeSessionInfo();
-        //const sessionClass = plainToClass(TrusteeSessionInfo, JSON.parse(JSON.stringify(session)))
-        return sessionInfo
+        const sessionClass = plainToClass(TrusteeSessionInfo, JSON.parse(JSON.stringify(sessionInfo)))
+        console.log(JSON.stringify(sessionClass))
+        return sessionClass
     }
 
     // 获取Storage中信托提现的Proposal状态
@@ -102,8 +103,8 @@ class Api {
 
     // 获取链状态
     async getChainProperties(): Promise<ChainPerties> {
-        await this.ready()
-        const systemProperties = await this.api.rpc.system.properties();
+       // await this.ready()
+       // const systemProperties = await this.api.rpc.system.properties();
             //  const properties = plainToClass(ChainPerties, systemProperties.toJSON());
         //const networkType = await this.getBtcNetworkState();
 

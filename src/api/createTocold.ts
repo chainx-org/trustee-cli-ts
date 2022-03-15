@@ -6,6 +6,7 @@ require("dotenv").config();
 require("console.table");
 import Api from "./chainx";
 import { getUnspents, calcTargetUnspents } from "./bitcoin";
+import { info } from "console";
 const bitcoin = require("bitcoinjs-lib");
 const colors = require('colors')
 
