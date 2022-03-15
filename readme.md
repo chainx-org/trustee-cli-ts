@@ -9,7 +9,6 @@ A CLI for trustee-tools.
 
 ```
 rm -rf node_modules
-rm -rf yarn.lock
 yarn 
 ```
 ### 冷钱包转热钱包
