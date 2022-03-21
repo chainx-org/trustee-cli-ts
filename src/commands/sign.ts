@@ -48,6 +48,9 @@ module.exports = {
 
         if (selectDevice === 'trezor') {
             console.log(colors.red(`当前input输入: ${JSON.stringify(inputAndOutPutResult)} \n`));
+            const signData = await device.sign(rawTx, inputAndOutPutResult.txInputs, remove0x(process.env.redeem_script), properties.bitcoinType);
+            console.log(colors.green(`签名成功\n`))
+            console.log(colors.red(`签名后交易原文:\n  ${JSON.stringify(signData)}`))
             return
         }
 

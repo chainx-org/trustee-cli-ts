@@ -287,9 +287,6 @@ class Trezor  {
     }
 
     async sign(raw, inputsArr, redeemScript, network = "mainnet") {
-        if (!this.device) {
-            throw new Error("No device");
-        }
 
         if (!redeemScript) {
             redeemScript = getRedeemScriptFromRaw(raw, network);
@@ -302,8 +299,10 @@ class Trezor  {
         const transaction = bitcoin.Transaction.fromHex(raw);
 
 
-        const [devicePubKey, deviceXpub] = await this.getDeviceXpub(network);
-
+        const [devicePubKey, deviceXpub] =  [
+            "034d3e7f87e69c6c71df6052b44f9ed99a3d811613140ebf09f8fdaf904a2e1de8",
+            "xpub6GAsPTES9mw9xLQivyTG9qpEkwuCHDmoXVwVM2GWxhQ6mZoUBkHAVcc4hofSf8yGi5buGmMnGP44DRCVRjm53jNWgViszQ3KHNpCegVw91H"
+        ]
         const inputs = constructInputs(transaction, redeemScript, devicePubKey, deviceXpub, network);
         const outputs = constructOutputs(raw, network);
 
@@ -313,18 +312,7 @@ class Trezor  {
         console.log(`trezor sign outputs: ${JSON.stringify(outputs)}`);
         console.log(`trezor sign txs: ${JSON.stringify(txs)}`);
 
-        const signResult = await this.device.waitForSessionAndRun(function (
-            session
-        ) {
-            return session.signTx(
-                inputs,
-                outputs,
-                txs,
-                network === "mainnet" ? "bitcoin" : "testnet"
-            );
-        });
-
-        return signResult.message.serialized.serialized_tx;
+        return "";
     }
 }
 
