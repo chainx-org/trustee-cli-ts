@@ -8,8 +8,6 @@ A CLI for trustee-tools.
 因chainx升级和trezor旧版本升级，现在需要对脚本进行升级
 
 ```
-rm -rf node_modules
-rm -rf yarn.lock
 yarn 
 ```
 ### 冷钱包转热钱包
