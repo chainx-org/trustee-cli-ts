@@ -1,8 +1,8 @@
 import { ApiPromise, WsProvider, Keyring } from "@polkadot/api"
-import { options } from "@chainx-v2/api"
+import { options } from "../chainxtypes"
 import { assert } from "console";
 import { plainToClass } from 'class-transformer'
-import { TrusteeSessionInfo, ChainPerties, WithdrawaItem, WithDrawLimit, BtcWithdrawalProposal, ValidatorProfile } from './types'
+import { TrusteeSessionInfo, ChainPerties, WithdrawaItem, WithDrawLimit, BtcWithdrawalProposal, XpalletMiningStakingValidatorProfile } from './types'
 
 const ora = require('ora');
 require("dotenv").config();
@@ -75,17 +75,17 @@ class Api {
     }
 
     // 获取节点名称
-    public async getNodeNames(accountId: string): Promise<ValidatorProfile | null> {
+    public async getNodeNames(accountId: string): Promise<XpalletMiningStakingValidatorProfile | null> {
         await this.ready()
         const { parentHash } = await this.api.rpc.chain.getHeader();
         const validatorProfile = await this.api.query.xStaking.validators.at(
             parentHash, accountId
-        );
+        ); 
         if (JSON.stringify(validatorProfile) === "null") {
             return null;
         }
 
-        return plainToClass(ValidatorProfile, JSON.parse(JSON.stringify(validatorProfile)))
+        return plainToClass(XpalletMiningStakingValidatorProfile, JSON.parse(JSON.stringify(validatorProfile)))
     }
 
     async getBtcNetworkState() {
