@@ -50,7 +50,6 @@ async function logSignedIntentions(trusteeList) {
     const singedInfoList: AlreadySigned[] = [];
     for (let info of infoList.trusteeList) {
         const validatorNames = await Api.getInstance().getNodeNames(info);
-        console.log(`${JSON.stringify(validatorNames)}`);
         singedInfoList.push({
             accountId: JSON.stringify(validatorNames.referralId),
             address: info,

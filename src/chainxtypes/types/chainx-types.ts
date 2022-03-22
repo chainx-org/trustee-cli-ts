@@ -141,7 +141,7 @@ export default {
       "lastVoteWeightUpdate": "BlockNumber",
       "unbondedChunks": "Vec<Unbonded>"
     },
-    "XpalletMiningStakingValidatorProfile": {
+    "ValidatorProfile": {
       "registeredAt": "BlockNumber",
       "isChilled": "bool",
       "lastChilled": "Option<BlockNumber>",

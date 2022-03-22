@@ -2,7 +2,7 @@ import { ApiPromise, WsProvider, Keyring } from "@polkadot/api"
 import { options } from "../chainxtypes"
 import { assert } from "console";
 import { plainToClass } from 'class-transformer'
-import { TrusteeSessionInfo, ChainPerties, WithdrawaItem, WithDrawLimit, BtcWithdrawalProposal, XpalletMiningStakingValidatorProfile } from './types'
+import { TrusteeSessionInfo, ChainPerties, WithdrawaItem, WithDrawLimit, BtcWithdrawalProposal, ValidatorProfile } from './types'
 
 const ora = require('ora');
 require("dotenv").config();
@@ -63,10 +63,7 @@ class Api {
     // 获取Storage中信托提现的Proposal状态
     public async getTxByReadStorage(): Promise<BtcWithdrawalProposal | null> {
         await this.ready()
-        const { parentHash } = await this.api.rpc.chain.getHeader();
-        const btcTxLists = await this.api.query.xGatewayBitcoin.withdrawalProposal.at(
-            parentHash
-        );
+        const btcTxLists = await this.api.query.xGatewayBitcoin.withdrawalProposal();
         if (JSON.stringify(btcTxLists) === "null") {
             return null;
         }
@@ -75,24 +72,26 @@ class Api {
     }
 
     // 获取节点名称
-    public async getNodeNames(accountId: string): Promise<XpalletMiningStakingValidatorProfile | null> {
+    public async getNodeNames(accountId: string): Promise<ValidatorProfile | null> {
         await this.ready()
-        const { parentHash } = await this.api.rpc.chain.getHeader();
-        const validatorProfile = await this.api.query.xStaking.validators.at(
-            parentHash, accountId
-        ); 
+        // @ts-ignore
+        const validatorProfileList = await this.api.rpc.xstaking.getValidators();
+
+        const validatorProfile = validatorProfileList.find(item=>{
+            return item.account.toString() === accountId
+        })
         if (JSON.stringify(validatorProfile) === "null") {
             return null;
         }
 
-        return plainToClass(XpalletMiningStakingValidatorProfile, JSON.parse(JSON.stringify(validatorProfile)))
+        return plainToClass(ValidatorProfile, JSON.parse(JSON.stringify(validatorProfile)))
     }
 
     async getBtcNetworkState() {
         await this.ready()
         const { parentHash } = await this.api.rpc.chain.getHeader();
         // @ts-ignore
-        const netWorkType = await this.api.query.xGatewayBitcoin.networkId.at(parentHash);
+        const netWorkType = await this.api.query.xGatewayBitcoin.networkId(parentHash);
         if (netWorkType.toString() === "Testnet") {
             return "testnet";
         } else {

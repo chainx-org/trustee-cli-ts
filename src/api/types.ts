@@ -47,7 +47,7 @@ export interface AlreadySigned {
     signed: boolean;
 }
 
-export class XpalletMiningStakingValidatorProfile {
+export class ValidatorProfile {
     registeredAt: string;
     isChilled: boolean;
     lastChilled: string;
