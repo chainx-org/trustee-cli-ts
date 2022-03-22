@@ -36,10 +36,10 @@ module.exports = {
             let type: string = selectDevice
 
             if (selectDevice === 'trezor') {
-                const trezor = new TrezorConnector();
+                //const trezor = new TrezorConnector();
                 type = selectDevice;
-                await trezor.init()
-                device = trezor;
+                //await trezor.init()
+                //device = trezor;
             } else if (selectDevice === 'ledger') {
                 const ledger = new Ledger('mainnet')
                 await ledger.init()

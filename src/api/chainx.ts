@@ -29,9 +29,7 @@ class Api {
             assert(true, "没有设置ChainX信托账户私钥")
         }
         await this.api.isReady
-        const systemProperties = await this.api.rpc.system.properties();
-
-        const properties = plainToClass(ChainPerties, systemProperties.toJSON());
+        const properties = await this.getChainProperties();
         const keyring = new Keyring({ type: "ed25519" });
         keyring.setSS58Format(properties.ss58Format)
         const account = keyring.addFromUri(process.env.chainx_private_key);
