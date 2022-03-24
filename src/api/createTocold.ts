@@ -5,8 +5,10 @@
 require("dotenv").config();
 require("console.table");
 import Api from "./chainx";
-import { getUnspents, calcTargetUnspents } from "./bitcoin";
-import { info } from "console";
+import {getUnspents, calcTargetUnspents} from "./bitcoin";
+import {info} from "console";
+import {getScriptPubkey} from "musig2bitcoin";
+
 const bitcoin = require("bitcoinjs-lib");
 const colors = require('colors')
 
@@ -14,6 +16,7 @@ export default class CreateToHot {
     public amount: number;
     public device: any;
     public deviceType: string;
+
     constructor(rawAmount: string) {
         this.amount = Math.pow(10, 8) * parseFloat(rawAmount);
     }
@@ -37,12 +40,14 @@ export default class CreateToHot {
         }
         const info = await Api.getInstance().getTrusteeSessionInfo();
         const hotAddr = info.hotAddress.addr;
+        const properties = await Api.getInstance().getChainProperties();
+        // todo: 等新的冷地址生成后替换成新的冷地址
+//         const coldAddr = String("bc1pu77rn5kk87fy7k2aknxc3nv5pkt7gt4rdg4qjslznf74zcyw96gs8myphy");
         const coldAddr = info.coldAddress.addr;
+        const coldScriptPubkey = getScriptPubkey(coldAddr, properties.bitcoinType);
         const required = info.threshold;
 
         console.log(colors.yellow(`redeem script ${info.coldAddress.redeemScript.toString()}`))
-
-        const properties = await Api.getInstance().getChainProperties();
 
         const total = info.trusteeList.length;
         console.log(`bitcoin type ${properties.bitcoinType}`)
@@ -61,7 +66,7 @@ export default class CreateToHot {
         );
         // @ts-ignore
         const inputSum = targetInputs.reduce((sum, input) => sum + input.amount, 0);
- 
+
         // 尝试对交易原文进行限制
         if (!minerFee) {
             throw new Error("手续费计算错误");
@@ -89,7 +94,7 @@ export default class CreateToHot {
             txb.addInput(unspent.txid, unspent.vout);
         }
 
-        txb.addOutput(coldAddr, this.amount);
+        txb.addOutput(Buffer.from(coldScriptPubkey, "hex"), this.amount);
         if (change > 0) {
             console.log(`hotAddr ${hotAddr} change ${change} BTC`);
             txb.addOutput(hotAddr, change);

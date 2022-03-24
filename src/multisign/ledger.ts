@@ -23,7 +23,6 @@ class Ledger {
 
     async init() {
         this.transport = await TransportNodeHid.create();
-        this.transport.setDebugMode(true);
         this.appBtc = new AppBtc(this.transport);
     }
 
