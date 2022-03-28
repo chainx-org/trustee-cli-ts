@@ -38,7 +38,7 @@ export default class CreateToHot {
             throw new Error("min_change 没有设置");
             process.exit(1);
         }
-        const info = await Api.getInstance().getTrusteeSessionInfo();
+        const info = await Api.getInstance().getTrusteeSessionInfo(0);
         const hotAddr = info.hotAddress.addr;
         const properties = await Api.getInstance().getChainProperties();
         // todo: 等新的冷地址生成后替换成新的冷地址

@@ -291,12 +291,15 @@ export default {
       "hotEntity": "BtcTrusteeType",
       "coldEntity": "BtcTrusteeType"
     },
-    "BtcTrusteeSessionInfo": {
-      "trusteeList": "Vec<AccountId>",
-      "threshold": "u16",
-      "hotAddress": "BtcTrusteeAddrInfo",
-      "coldAddress": "BtcTrusteeAddrInfo"
-    },
+  "BtcTrusteeSessionInfo": {
+    "trusteeList": "Vec<(AccountId, u64)>",
+    "threshold": "u16",
+    "hotAddress": "BtcTrusteeAddrInfo",
+    "coldAddress": "BtcTrusteeAddrInfo",
+    "multiAccount": "Option<AccountId>",
+    "startHeight": "Option<BlockNumber>",
+    "endHeight": "Option<BlockNumber>"
+  },
     "BtcTransaction": "Vec<u8>",
     "BtcPartialMerkleTree": "Vec<u8>",
     "BtcRelayedTxInfo": {

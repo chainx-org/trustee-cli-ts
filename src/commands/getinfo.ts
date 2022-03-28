@@ -12,7 +12,7 @@ module.exports = {
         // } = toolbox
         const api = Api.getInstance();
 
-        const session = await api.getTrusteeSessionInfo();
+        const session = await api.getTrusteeSessionInfo(0);
         const table = new Table({
             head: ['id', 'trustee addr', 'threshold']
         });

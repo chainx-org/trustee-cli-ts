@@ -37,7 +37,7 @@ async function logSignedIntentions(trusteeList) {
     console.log(colors.red(`已签数量: ${trusteeList.length} \n`))
     console.log("信托列表签名情况:\n");
 
-    const infoList = await Api.getInstance().getTrusteeSessionInfo();
+    const infoList = await Api.getInstance().getTrusteeSessionInfo(0);
 
     const alreadySignedList: string[] = [];
     for (let trustee of trusteeList) {
@@ -82,7 +82,7 @@ module.exports = {
             process.exit(0)
         } else {
             console.log(colors.red(`代签原文: \n ${withdrawTx.tx} \n`));
-            const info = await api.getTrusteeSessionInfo();
+            const info = await api.getTrusteeSessionInfo(0);
             console.log(colors.yellow(`Hot Addres redeemScript: \n  ${info.hotAddress.redeemScript.toString()} \n`));
             console.log(colors.white(`Cold Address redeemScript: \n  ${info.coldAddress.redeemScript.toString()} \n`));
             await parseRawTxAndLog(withdrawTx.tx);

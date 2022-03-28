@@ -138,7 +138,7 @@ export default class ContstructTx {
     }
 
     async composeBtcTx(withdrawals, fee) {
-        const info = await this.api.getTrusteeSessionInfo();
+        const info = await this.api.getTrusteeSessionInfo(0);
         const properties = await this.api.getChainProperties();
 
         const { addr } = info.hotAddress;
@@ -228,7 +228,7 @@ export default class ContstructTx {
         if (!this.needSign) {
             return false;
         }
-        const info = await this.api.getTrusteeSessionInfo();
+        const info = await this.api.getTrusteeSessionInfo(0);
         const redeemScript = Buffer.from(
             remove0x(info.hotAddress.redeemScript.toString()),
             "hex"
