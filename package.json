@@ -58,7 +58,6 @@
     "gluegun": "latest",
     "js-base64": "^3.6.0",
     "memoizee": "^0.4.14",
-    "musig2bitcoin": "1.4.4",
     "node-fetch": "^2.6.1",
     "ora": "^5.1.0",
     "trezor-connect": "^8.2.7-extended"

@@ -7,7 +7,6 @@ require("console.table");
 import Api from "./chainx";
 import {getUnspents, calcTargetUnspents} from "./bitcoin";
 import {info} from "console";
-import {getScriptPubkey} from "musig2bitcoin";
 
 const bitcoin = require("bitcoinjs-lib");
 const colors = require('colors')
@@ -44,7 +43,6 @@ export default class CreateToHot {
         // todo: 等新的冷地址生成后替换成新的冷地址
 //         const coldAddr = String("bc1pu77rn5kk87fy7k2aknxc3nv5pkt7gt4rdg4qjslznf74zcyw96gs8myphy");
         const coldAddr = info.coldAddress.addr;
-        const coldScriptPubkey = getScriptPubkey(coldAddr, properties.bitcoinType);
         const required = info.threshold;
 
         console.log(colors.yellow(`redeem script ${info.coldAddress.redeemScript.toString()}`))
@@ -94,7 +92,7 @@ export default class CreateToHot {
             txb.addInput(unspent.txid, unspent.vout);
         }
 
-        txb.addOutput(Buffer.from(coldScriptPubkey, "hex"), this.amount);
+        txb.addOutput(coldAddr, this.amount);
         if (change > 0) {
             console.log(`hotAddr ${hotAddr} change ${change} BTC`);
             txb.addOutput(hotAddr, change);
